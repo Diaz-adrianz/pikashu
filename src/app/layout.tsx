@@ -20,7 +20,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Pikashu | Shuttle Booking App',
+  title: 'Pikashu | Pemesanan Bus dan Minibus',
+  description:
+    'Cari perjalanan, pilih kursi, bayar, dan simpan tiket QR untuk perjalanan bus dan minibus.',
 };
 
 export default async function RootLayout({ children }: LayoutProps<'/'>) {
@@ -28,7 +30,7 @@ export default async function RootLayout({ children }: LayoutProps<'/'>) {
 
   return (
     <html
-      lang="en"
+      lang="id"
       className={cn(
         'h-full',
         'antialiased',

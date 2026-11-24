@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { LogoIcon } from '@/assets/images';
 import {
   Header,
@@ -6,9 +7,16 @@ import {
   HeaderUser,
   NavItem,
 } from '@/components/shared/header';
+import { MarketingFooter } from '@/components/shared/marketing-footer';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode } from 'react';
+
+export const metadata: Metadata = {
+  title: 'Pikashu | Pemesanan Bus dan Minibus',
+  description:
+    'Cari perjalanan, lihat fasilitas, pilih kursi, dan bawa tiket QR untuk boarding.',
+};
 
 const NAVS: NavItem[] = [
   { href: '/', label: 'Cari' },
@@ -30,7 +38,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <HeaderUser />
       </Header>
       {children}
-      {/* footer here  */}
+      <MarketingFooter />
     </>
   );
 }
