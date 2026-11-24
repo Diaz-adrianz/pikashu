@@ -54,7 +54,9 @@ function loadSnap(): Promise<Snap> {
     script.async = true;
     script.setAttribute('data-client-key', CLIENT_KEY);
     script.onload = () =>
-      win.snap ? resolve(win.snap) : reject(new Error('Midtrans tidak tersedia'));
+      win.snap
+        ? resolve(win.snap)
+        : reject(new Error('Midtrans tidak tersedia'));
     script.onerror = () => {
       snapLoader = null;
       reject(new Error('Gagal memuat Midtrans'));
@@ -68,11 +70,16 @@ export default function PaymentPage() {
   const { code } = useParams<{ code: string }>();
   const router = useRouter();
   const { data: session, status } = useSession();
-  const enabled = status === 'authenticated' && session?.user.role === 'PASSENGER';
-  const { item: booking, isLoading, refresh } = useApi<GetBookingResponse>(
-    `/api/bookings/${code}`,
-    { enabled, cache: 'fresh' }
-  );
+  const enabled =
+    status === 'authenticated' && session?.user.role === 'PASSENGER';
+  const {
+    item: booking,
+    isLoading,
+    refresh,
+  } = useApi<GetBookingResponse>(`/api/bookings/${code}`, {
+    enabled,
+    cache: 'fresh',
+  });
 
   const [now, setNow] = useState(() => Date.now());
   const [token, setToken] = useState<string | null>(null);
@@ -117,7 +124,10 @@ export default function PaymentPage() {
   const expiresAt = booking ? Date.parse(String(booking.expiresAt)) : 0;
   const remaining = Math.max(0, expiresAt - now);
   const minutes = String(Math.floor(remaining / 60_000)).padStart(2, '0');
-  const seconds = String(Math.floor((remaining % 60_000) / 1000)).padStart(2, '0');
+  const seconds = String(Math.floor((remaining % 60_000) / 1000)).padStart(
+    2,
+    '0'
+  );
   const expired =
     !!booking && (remaining === 0 || booking.status !== 'PENDING_PAYMENT');
 
@@ -136,7 +146,7 @@ export default function PaymentPage() {
   };
 
   return (
-    <Page>
+    <Page className="min-h-svh">
       <PageNav
         items={[
           { label: 'Beranda', href: '/' },
@@ -187,7 +197,9 @@ export default function PaymentPage() {
                 <PageSection className="grid gap-4 lg:grid-cols-[2fr_1fr]">
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-lg">Ringkasan pemesanan</CardTitle>
+                      <CardTitle className="text-lg">
+                        Ringkasan pemesanan
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="grid gap-3 text-sm">
                       <div className="flex justify-between gap-2">
@@ -199,25 +211,36 @@ export default function PaymentPage() {
                       <div className="flex justify-between gap-2">
                         <span>Berangkat</span>
                         <span>
-                          {format(booking.trip.departureAt, 'dd MMM yyyy HH:mm')}
+                          {format(
+                            booking.trip.departureAt,
+                            'dd MMM yyyy HH:mm'
+                          )}
                         </span>
                       </div>
                       <div className="flex justify-between gap-2">
                         <span>Tiket</span>
                         <span className="text-right">
                           {booking.tickets
-                            .map((t) => `Kursi ${t.seatNumber} (${t.passengerName})`)
+                            .map(
+                              (t) =>
+                                `Kursi ${t.seatNumber} (${t.passengerName})`
+                            )
                             .join(', ')}
                         </span>
                       </div>
                       <div className="flex justify-between gap-2">
                         <span>Harga tiket ({booking.tickets.length})</span>
                         <span>
-                          {formatCurrency(booking.trip.price * booking.tickets.length)}
+                          {formatCurrency(
+                            booking.trip.price * booking.tickets.length
+                          )}
                         </span>
                       </div>
                       {booking.optionalServices.map((service) => (
-                        <div key={service.id} className="flex justify-between gap-2">
+                        <div
+                          key={service.id}
+                          className="flex justify-between gap-2"
+                        >
                           <span>
                             {service.name} × {service.quantity}
                           </span>
@@ -254,16 +277,20 @@ export default function PaymentPage() {
                       ) : (
                         <>
                           <p className="typo-caption text-muted-foreground">
-                            Sisa waktu: {minutes}:{seconds} sejak waktu kedaluwarsa
-                            server.
+                            Sisa waktu: {minutes}:{seconds} sejak waktu
+                            kedaluwarsa server.
                           </p>
                           {!token ? (
                             <Button
                               disabled={isCreating}
                               onClick={() => createPayment(booking.id)}
                             >
-                              {isCreating && <Spinner data-icon="inline-start" />}
-                              {isCreating ? 'Menyiapkan pembayaran...' : 'Bayar'}
+                              {isCreating && (
+                                <Spinner data-icon="inline-start" />
+                              )}
+                              {isCreating
+                                ? 'Menyiapkan pembayaran...'
+                                : 'Bayar'}
                             </Button>
                           ) : (
                             <Button onClick={openSnap}>

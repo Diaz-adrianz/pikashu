@@ -21,7 +21,12 @@ import {
 } from '@/components/shared/page';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -57,23 +62,14 @@ function Results() {
     [searchParams, sort]
   );
 
-  const {
-    items,
-    total,
-    page,
-    limit,
-    hasNext,
-    hasPrev,
-    next,
-    prev,
-    isLoading,
-  } = useApiPaginate<GetTripsResponse>('/api/trips', { params, limit: 10 });
+  const { items, total, page, limit, hasNext, hasPrev, next, prev, isLoading } =
+    useApiPaginate<GetTripsResponse>('/api/trips', { params, limit: 10 });
 
   const origin = params.originCity;
   const destination = params.destinationCity;
 
   return (
-    <Page>
+    <Page className="min-h-svh">
       <PageNav
         items={[{ label: 'Beranda', href: '/' }, { label: 'Perjalanan' }]}
       />
@@ -113,9 +109,9 @@ function Results() {
             {items.map((trip) => {
               const image = trip.fleet.images[0];
               return (
-                <Card key={trip.id}>
+                <Card key={trip.id} className="pt-0">
                   {image && (
-                    <div className="relative h-40 w-full bg-muted">
+                    <div className="relative aspect-video w-full bg-muted">
                       <Image
                         src={`/api/uploads/${image.path}`}
                         alt={trip.fleet.name}

@@ -16,11 +16,7 @@ import { Search } from '@/components/shared/search';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-} from '@/components/ui/empty';
+import { Empty, EmptyDescription, EmptyHeader } from '@/components/ui/empty';
 import {
   Select,
   SelectContent,
@@ -54,23 +50,15 @@ const statusVariant = (status: string) =>
 export default function BookingsPage() {
   const { data: session, status } = useSession();
   const [filter, setFilter] = useState({ status: '', code: '' });
-  const enabled = status === 'authenticated' && session?.user.role === 'PASSENGER';
+  const enabled =
+    status === 'authenticated' && session?.user.role === 'PASSENGER';
 
-  const {
-    items,
-    total,
-    page,
-    limit,
-    hasNext,
-    hasPrev,
-    next,
-    prev,
-    isLoading,
-  } = useApiPaginate<GetBookingsResponse>('/api/bookings', {
-    params: { status: filter.status },
-    enabled,
-    limit: 10,
-  });
+  const { items, total, page, limit, hasNext, hasPrev, next, prev, isLoading } =
+    useApiPaginate<GetBookingsResponse>('/api/bookings', {
+      params: { status: filter.status },
+      enabled,
+      limit: 10,
+    });
 
   const visible = items.filter((item) =>
     item.code.toLowerCase().includes(filter.code.toLowerCase())
@@ -80,12 +68,9 @@ export default function BookingsPage() {
     .slice(0, 3);
 
   return (
-    <Page>
+    <Page className="min-h-svh">
       <PageNav
-        items={[
-          { label: 'Beranda', href: '/' },
-          { label: 'Pemesanan Saya' },
-        ]}
+        items={[{ label: 'Beranda', href: '/' }, { label: 'Pemesanan Saya' }]}
       />
       <PageHeader
         title="Pemesanan Saya"
@@ -124,8 +109,15 @@ export default function BookingsPage() {
                         {format(item.trip.departureAt, 'dd MMM yyyy HH:mm')} ·{' '}
                         {item.trip.fleet.name}
                       </p>
-                      <Button size="sm" variant="secondary" className="mt-2" asChild>
-                        <Link href={`/bookings/${item.code}`}>Lihat detail</Link>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="mt-2"
+                        asChild
+                      >
+                        <Link href={`/bookings/${item.code}`}>
+                          Lihat detail
+                        </Link>
                       </Button>
                     </CardContent>
                   </Card>
@@ -139,9 +131,7 @@ export default function BookingsPage() {
               <Search
                 className="min-w-56 flex-1"
                 placeholder="Cari kode pemesanan..."
-                onSearch={(code) =>
-                  setFilter((prev) => ({ ...prev, code }))
-                }
+                onSearch={(code) => setFilter((prev) => ({ ...prev, code }))}
               />
               <Select
                 value={filter.status}

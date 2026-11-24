@@ -30,10 +30,11 @@ export default function ProfilePage() {
   const { data: session, status } = useSession();
   const [passwordKey, setPasswordKey] = useState(0);
   const enabled = status === 'authenticated';
-  const { item: profile, isLoading, refresh } = useApi<GetProfileResponse>(
-    '/api/profile',
-    { enabled }
-  );
+  const {
+    item: profile,
+    isLoading,
+    refresh,
+  } = useApi<GetProfileResponse>('/api/profile', { enabled });
 
   const { run: saveProfile, isLoading: isSaving } = useAction(
     updateProfileAction,
@@ -101,8 +102,10 @@ export default function ProfilePage() {
         <PageSection className="grid gap-4 lg:grid-cols-[1fr_2fr]">
           <Card className="h-fit">
             <CardHeader className="items-center text-center">
-              <Avatar className="size-20">
-                <AvatarImage src={profile?.image ?? session?.user.image ?? ''} />
+              <Avatar className="mx-auto size-20">
+                <AvatarImage
+                  src={profile?.image ?? session?.user.image ?? ''}
+                />
                 <AvatarFallback>
                   {getInitials(profile?.name ?? session?.user.name)}
                 </AvatarFallback>
@@ -114,10 +117,6 @@ export default function ProfilePage() {
                 {profile?.email ?? session?.user.email}
               </p>
             </CardHeader>
-            <CardContent className="typo-caption text-muted-foreground">
-              Email tidak dapat diubah pada versi ini. Foto profil tidak dapat
-              diunggah.
-            </CardContent>
           </Card>
 
           <div className="flex flex-col gap-4">
@@ -127,7 +126,9 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent>
                 {isLoading && !profile ? (
-                  <p className="text-sm text-muted-foreground">Memuat profil...</p>
+                  <p className="text-sm text-muted-foreground">
+                    Memuat profil...
+                  </p>
                 ) : (
                   <form
                     key={profile?.id ?? 'profile'}

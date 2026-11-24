@@ -24,10 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  SeatTierOptionsMap,
-  FleetTypeOptionsMap,
-} from '@/constants/options';
+import { SeatTierOptionsMap, FleetTypeOptionsMap } from '@/constants/options';
 import { getSeatLayout } from '@/features/trip/seat-layout';
 import { useApi } from '@/hooks/use-api';
 import { cn, formatCurrency } from '@/lib/utils';
@@ -43,9 +40,12 @@ const TileLayer = dynamic(
 const Marker = dynamic(() => import('react-leaflet').then((m) => m.Marker), {
   ssr: false,
 });
-const Polyline = dynamic(() => import('react-leaflet').then((m) => m.Polyline), {
-  ssr: false,
-});
+const Polyline = dynamic(
+  () => import('react-leaflet').then((m) => m.Polyline),
+  {
+    ssr: false,
+  }
+);
 const GeoJSON = dynamic(() => import('react-leaflet').then((m) => m.GeoJSON), {
   ssr: false,
 });
@@ -135,7 +135,8 @@ export default function TripDetailPage() {
   const { item: trip, isLoading } = useApi<GetTripResponse>(`/api/trips/${id}`);
   const [selected, setSelected] = useState<string[]>([]);
 
-  const canBook = status === 'authenticated' && session?.user.role === 'PASSENGER';
+  const canBook =
+    status === 'authenticated' && session?.user.role === 'PASSENGER';
   const layout = trip ? getSeatLayout(trip.fleet.type) : null;
   const occupied = new Set(trip?.occupiedSeats ?? []);
   const facilities = Array.isArray(trip?.facilities)
@@ -180,9 +181,9 @@ export default function TripDetailPage() {
               action={<Badge>{SeatTierOptionsMap[trip.seatTier].label}</Badge>}
             />
             <PageSection className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-              <Card>
+              <Card className="pt-0">
                 {trip.fleet.images[0] && (
-                  <div className="relative h-56 w-full bg-muted">
+                  <div className="relative aspect-video w-full bg-muted">
                     <Image
                       src={`/api/uploads/${trip.fleet.images[0].path}`}
                       alt={trip.fleet.name}
@@ -213,7 +214,9 @@ export default function TripDetailPage() {
                     {FleetTypeOptionsMap[trip.fleet.type].label}
                   </p>
                   <p>
-                    <span className="text-muted-foreground">Kursi tersedia</span>
+                    <span className="text-muted-foreground">
+                      Kursi tersedia
+                    </span>
                     <br />
                     {trip.capacity - occupied.size} dari {trip.capacity}
                   </p>
@@ -234,8 +237,8 @@ export default function TripDetailPage() {
                 <h2 className="typo-heading-md">Fasilitas</h2>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {facilities.map((facility, i) => (
-                    <Card key={`${facility.title}-${i}`}>
-                      <div className="relative h-32 w-full bg-muted">
+                    <Card key={`${facility.title}-${i}`} className="pt-0">
+                      <div className="relative aspect-video w-full bg-muted">
                         <Image
                           src={`/api/uploads/${facility.image}`}
                           alt={facility.title}

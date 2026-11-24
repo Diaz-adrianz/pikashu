@@ -27,11 +27,16 @@ export default function BookingDetailPage() {
   const { code } = useParams<{ code: string }>();
   const confirm = useConfirm();
   const { data: session, status } = useSession();
-  const enabled = status === 'authenticated' && session?.user.role === 'PASSENGER';
-  const { item: booking, isLoading, refresh } = useApi<GetBookingResponse>(
-    `/api/bookings/${code}`,
-    { enabled, cache: 'fresh' }
-  );
+  const enabled =
+    status === 'authenticated' && session?.user.role === 'PASSENGER';
+  const {
+    item: booking,
+    isLoading,
+    refresh,
+  } = useApi<GetBookingResponse>(`/api/bookings/${code}`, {
+    enabled,
+    cache: 'fresh',
+  });
   const { run: cancel, isLoading: isCancelling } = useAction(
     cancelBookingAction,
     {
@@ -42,7 +47,8 @@ export default function BookingDetailPage() {
 
   // Server enforces departure cutoff; UI only gates by cancellable status.
   const canCancel =
-    !!booking && ['PENDING_PAYMENT', 'PAID', 'COMPLETED'].includes(booking.status);
+    !!booking &&
+    ['PENDING_PAYMENT', 'PAID', 'COMPLETED'].includes(booking.status);
 
   const onCancel = async () => {
     const ok = await confirm({
@@ -57,7 +63,7 @@ export default function BookingDetailPage() {
   };
 
   return (
-    <Page>
+    <Page className="min-h-svh">
       <PageNav
         items={[
           { label: 'Beranda', href: '/' },
@@ -113,7 +119,9 @@ export default function BookingDetailPage() {
                 <PageSection className="grid gap-4 lg:grid-cols-2">
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-lg">Detail perjalanan</CardTitle>
+                      <CardTitle className="text-lg">
+                        Detail perjalanan
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="grid gap-2 text-sm">
                       <p className="font-medium">{booking.trip.route.name}</p>
@@ -126,7 +134,8 @@ export default function BookingDetailPage() {
                         {format(booking.trip.departureAt, 'dd MMM yyyy HH:mm')}
                       </p>
                       <p>
-                        Tiba: {format(booking.trip.arrivalAt, 'dd MMM yyyy HH:mm')}
+                        Tiba:{' '}
+                        {format(booking.trip.arrivalAt, 'dd MMM yyyy HH:mm')}
                       </p>
                       <p>Armada: {booking.trip.fleet.name}</p>
                       <p>Kelas: {booking.trip.seatTier}</p>
@@ -184,11 +193,16 @@ export default function BookingDetailPage() {
                   <PageSection>
                     <Card>
                       <CardHeader>
-                        <CardTitle className="text-lg">Layanan tambahan</CardTitle>
+                        <CardTitle className="text-lg">
+                          Layanan tambahan
+                        </CardTitle>
                       </CardHeader>
                       <CardContent className="grid gap-2 text-sm">
                         {booking.optionalServices.map((service) => (
-                          <div key={service.id} className="flex justify-between">
+                          <div
+                            key={service.id}
+                            className="flex justify-between"
+                          >
                             <span>
                               {service.name} × {service.quantity}
                             </span>
