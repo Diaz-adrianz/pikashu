@@ -97,7 +97,7 @@ export default function UsersPage() {
         title="Akun"
         action={
           <Button onClick={() => createDialog.show()}>
-            <PlusIcon />
+            <PlusIcon data-icon="inline-start" />
             Buat
           </Button>
         }
@@ -165,7 +165,7 @@ export default function UsersPage() {
                           variant={'ghost'}
                           onClick={() => updateDialog.show({ id: item.id })}
                         >
-                          <Edit3Icon />
+                          <Edit3Icon data-icon="inline-start" />
                         </Button>
                         <Button
                           size={'icon-sm'}
@@ -173,7 +173,7 @@ export default function UsersPage() {
                           className="text-destructive!"
                           onClick={() => onDel(item)}
                         >
-                          <TrashIcon />
+                          <TrashIcon data-icon="inline-start" />
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -194,7 +194,7 @@ export default function UsersPage() {
                 disabled={isLoading}
                 onClick={prev}
               >
-                <ChevronLeftIcon />
+                <ChevronLeftIcon data-icon="inline-start" />
                 Prev
               </Button>
             )}
@@ -206,7 +206,7 @@ export default function UsersPage() {
                 onClick={next}
               >
                 Next
-                <ChevronRightIcon />
+                <ChevronRightIcon data-icon="inline-end" />
               </Button>
             )}
           </CardFooter>

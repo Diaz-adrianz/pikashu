@@ -25,10 +25,12 @@ import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { LoadingOverlay } from '@/components/shared/loading';
 import { NotFoundData } from '@/components/shared/not-found';
 import { GetScheduleResponse } from '@/app/api/schedules/[id]/route';
@@ -141,11 +143,13 @@ function ScheduleFormDialog({
                           <SelectValue placeholder="Pilih rute" />
                         </SelectTrigger>
                         <SelectContent>
-                          {routes?.items.map((r) => (
-                            <SelectItem key={r.id} value={r.id}>
-                              {r.name} · {r.originCity} → {r.destinationCity}
-                            </SelectItem>
-                          ))}
+                          <SelectGroup>
+                            {routes?.items.map((r) => (
+                              <SelectItem key={r.id} value={r.id}>
+                                {r.name} · {r.originCity} → {r.destinationCity}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                       {fieldState.invalid && (
@@ -173,11 +177,13 @@ function ScheduleFormDialog({
                           <SelectValue placeholder="Pilih armada" />
                         </SelectTrigger>
                         <SelectContent>
-                          {fleets?.items.map((f) => (
-                            <SelectItem key={f.id} value={f.id}>
-                              {f.name}
-                            </SelectItem>
-                          ))}
+                          <SelectGroup>
+                            {fleets?.items.map((f) => (
+                              <SelectItem key={f.id} value={f.id}>
+                                {f.name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                       {fieldState.invalid && (
@@ -215,6 +221,7 @@ function ScheduleFormDialog({
                 form="form-schedule"
                 disabled={!form.formState.isValid || isSaving}
               >
+                {isSaving && <Spinner data-icon="inline-start" />}
                 Simpan
               </Button>
             </DialogFooter>

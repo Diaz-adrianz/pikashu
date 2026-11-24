@@ -13,7 +13,12 @@ import {
 } from '@/components/shared/page';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -67,9 +72,11 @@ export default function StaffPage() {
       </PageSection>
 
       <PageSection>
-        <Card>
+        <Card className="gap-4">
+          <CardHeader>
+            <CardTitle>Daftar perjalanan</CardTitle>
+          </CardHeader>
           <CardContent>
-            <CardTitle className="mb-4">Daftar perjalanan</CardTitle>
             <div className="rounded-2xl border">
               <Table>
                 <TableHeader>
@@ -124,13 +131,13 @@ export default function StaffPage() {
                         <div className="flex justify-end gap-1">
                           <Button size="sm" variant="outline" asChild>
                             <Link href={`/staff/manifest?trip=${trip.id}`}>
-                              <TicketsIcon />
+                              <TicketsIcon data-icon="inline-start" />
                               Manifest
                             </Link>
                           </Button>
                           <Button size="sm" variant="secondary" asChild>
                             <Link href={`/staff/scan?trip=${trip.id}`}>
-                              <QrCodeIcon />
+                              <QrCodeIcon data-icon="inline-start" />
                               Pindai
                             </Link>
                           </Button>

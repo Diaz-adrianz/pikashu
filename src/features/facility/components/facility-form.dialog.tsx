@@ -26,10 +26,12 @@ import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useAction } from '@/hooks/use-action';
 import { useApi } from '@/hooks/use-api';
@@ -156,11 +158,13 @@ function FacilityFormDialog({
                           <SelectValue placeholder="Pilih" />
                         </SelectTrigger>
                         <SelectContent>
-                          {SeatTierOptions.map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
+                          <SelectGroup>
+                            {SeatTierOptions.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                       {fieldState.invalid && (
@@ -249,6 +253,7 @@ function FacilityFormDialog({
                   !form.formState.isValid || isSaving || (!id && !image)
                 }
               >
+                {isSaving && <Spinner data-icon="inline-start" />}
                 Simpan
               </Button>
             </DialogFooter>

@@ -13,6 +13,7 @@ import {
   TicketsIcon,
   Undo2Icon,
   UsersIcon,
+  type LucideIcon,
 } from 'lucide-react';
 import {
   SidebarMenu,
@@ -20,21 +21,8 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
-const ICONS = {
-  dashboard: LayoutDashboardIcon,
-  fleet: BusIcon,
-  route: RouteIcon,
-  schedule: CalendarClock,
-  trip: TicketsIcon,
-  service: HeartPlusIcon,
-  facility: ArmchairIcon,
-  user: UsersIcon,
-  refund: Undo2Icon,
-  qr: QrCodeIcon,
-};
-
 type MenuItem = {
-  icon: keyof typeof ICONS;
+  icon: LucideIcon;
   href: string;
   label: string;
 };
@@ -45,13 +33,12 @@ function isActive(pathname: string, href: string) {
   return pathname.startsWith(`${href}/`);
 }
 
-export function SidebarNav({ menus }: { menus: readonly MenuItem[] }) {
+function Nav({ menus }: { menus: MenuItem[] }) {
   const pathname = usePathname();
 
   return (
     <SidebarMenu>
-      {menus.map(({ icon, href, label }) => {
-        const Icon = ICONS[icon];
+      {menus.map(({ icon: Icon, href, label }) => {
         const active = isActive(pathname, href);
         return (
           <SidebarMenuItem key={href}>
@@ -65,5 +52,35 @@ export function SidebarNav({ menus }: { menus: readonly MenuItem[] }) {
         );
       })}
     </SidebarMenu>
+  );
+}
+
+export function AdminSidebarNav() {
+  return (
+    <Nav
+      menus={[
+        { icon: LayoutDashboardIcon, href: '/admin', label: 'Dasbor' },
+        { icon: BusIcon, href: '/admin/fleets', label: 'Armada' },
+        { icon: RouteIcon, href: '/admin/routes', label: 'Rute' },
+        { icon: CalendarClock, href: '/admin/schedules', label: 'Jadwal' },
+        { icon: TicketsIcon, href: '/admin/trips', label: 'Perjalanan' },
+        { icon: HeartPlusIcon, href: '/admin/services', label: 'Layanan' },
+        { icon: ArmchairIcon, href: '/admin/facilities', label: 'Fasilitas' },
+        { icon: UsersIcon, href: '/admin/users', label: 'Akun' },
+        { icon: Undo2Icon, href: '/admin/refunds', label: 'Refund' },
+      ]}
+    />
+  );
+}
+
+export function StaffSidebarNav() {
+  return (
+    <Nav
+      menus={[
+        { icon: LayoutDashboardIcon, href: '/staff', label: 'Dasbor' },
+        { icon: TicketsIcon, href: '/staff/manifest', label: 'Pemesanan' },
+        { icon: QrCodeIcon, href: '/staff/scan', label: 'Pindai QR' },
+      ]}
+    />
   );
 }

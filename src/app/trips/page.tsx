@@ -21,10 +21,11 @@ import {
 } from '@/components/shared/page';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -89,11 +90,13 @@ function Results() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {SORTS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
+              <SelectGroup>
+                {SORTS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
         }
@@ -123,18 +126,18 @@ function Results() {
                       />
                     </div>
                   )}
-                  <CardContent className="flex flex-1 flex-col gap-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="grid">
-                        <h2 className="typo-heading-sm">{trip.route.name}</h2>
-                        <p className="typo-caption text-muted-foreground">
-                          {trip.fleet.name}
-                        </p>
-                      </div>
-                      <Badge variant="secondary">
-                        {SeatTierOptionsMap[trip.seatTier].label}
-                      </Badge>
+                  <CardHeader className="flex flex-row items-start justify-between gap-2">
+                    <div className="grid">
+                      <h2 className="typo-heading-sm">{trip.route.name}</h2>
+                      <p className="typo-caption text-muted-foreground">
+                        {trip.fleet.name}
+                      </p>
                     </div>
+                    <Badge variant="secondary">
+                      {SeatTierOptionsMap[trip.seatTier].label}
+                    </Badge>
+                  </CardHeader>
+                  <CardContent className="flex flex-1 flex-col gap-3">
                     <p className="flex items-center gap-2 text-sm">
                       <MapPinIcon className="size-4 text-primary" />
                       {trip.route.originCity} → {trip.route.destinationCity}
@@ -151,21 +154,21 @@ function Results() {
                         {format(trip.arrivalAt, 'dd MMM yyyy HH:mm')}
                       </p>
                     </div>
-                    <div className="mt-auto flex items-end justify-between gap-2 pt-2">
-                      <div>
-                        <p className="text-lg font-semibold text-primary">
-                          {formatCurrency(trip.price)}
-                        </p>
-                        <p className="flex items-center gap-1 typo-caption text-muted-foreground">
-                          <UsersIcon className="size-3" />
-                          {trip.available} kursi tersedia
-                        </p>
-                      </div>
-                      <Button size="sm" asChild>
-                        <Link href={`/trips/${trip.id}`}>Detail</Link>
-                      </Button>
-                    </div>
                   </CardContent>
+                  <CardFooter className="items-end justify-between gap-2 pt-2">
+                    <div>
+                      <p className="text-lg font-semibold text-primary">
+                        {formatCurrency(trip.price)}
+                      </p>
+                      <p className="flex items-center gap-1 typo-caption text-muted-foreground">
+                        <UsersIcon className="size-3" />
+                        {trip.available} kursi tersedia
+                      </p>
+                    </div>
+                    <Button size="sm" asChild>
+                      <Link href={`/trips/${trip.id}`}>Detail</Link>
+                    </Button>
+                  </CardFooter>
                 </Card>
               );
             })}
@@ -182,7 +185,7 @@ function Results() {
           </p>
           {hasPrev && (
             <Button size="sm" variant="secondary" onClick={prev}>
-              <ChevronLeftIcon />
+              <ChevronLeftIcon data-icon="inline-start" />
               Prev
             </Button>
           )}
@@ -192,7 +195,7 @@ function Results() {
           {hasNext && (
             <Button size="sm" variant="secondary" onClick={next}>
               Next
-              <ChevronRightIcon />
+              <ChevronRightIcon data-icon="inline-end" />
             </Button>
           )}
         </CardFooter>

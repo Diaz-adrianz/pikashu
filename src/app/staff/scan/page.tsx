@@ -12,18 +12,38 @@ import {
   PageNav,
   PageSection,
 } from '@/components/shared/page';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/components/ui/input-group';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { boardTicketAction } from '@/features/ticket/actions';
 import { useApi } from '@/hooks/use-api';
+import { cn } from '@/lib/utils';
 
 type Feedback = { type: 'success' | 'error'; title: string; detail?: string };
 
@@ -204,46 +224,47 @@ function ScanPanel({ disabled }: { disabled: boolean }) {
 
   return (
     <>
-      <Card>
-        <CardContent>
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <CardTitle>Pemindai QR</CardTitle>
-            <div className="flex gap-2">
+      <Card className="gap-4">
+        <CardHeader>
+          <CardTitle>Pemindai QR</CardTitle>
+          <CardAction className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={() => void startScanner()}
+              disabled={scanning || disabled}
+            >
+              {scanning ? 'Kamera aktif' : 'Mulai kamera'}
+            </Button>
+            {scanning && (
               <Button
                 size="sm"
-                onClick={() => void startScanner()}
-                disabled={scanning || disabled}
+                variant="outline"
+                onClick={() => void stopScanner()}
               >
-                {scanning ? 'Kamera aktif' : 'Mulai kamera'}
+                Hentikan
               </Button>
-              {scanning && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => void stopScanner()}
-                >
-                  Hentikan
-                </Button>
-              )}
-            </div>
-          </div>
-
-          <div className="relative overflow-hidden rounded-2xl border bg-white">
+            )}
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <div className="relative overflow-hidden rounded-2xl border bg-card">
             <div
               id="staff-qr-reader"
               className="[&_video]:h-auto [&_video]:w-full"
             />
             {!scanning && (
-              <div className="absolute inset-0 grid place-items-center bg-white/80 text-sm text-muted-foreground">
+              <div className="absolute inset-0 grid place-items-center bg-card/80 text-sm text-muted-foreground">
                 {disabled ? 'Pilih perjalanan terlebih dahulu' : 'Kamera belum aktif'}
               </div>
             )}
           </div>
 
           {!!cameraError && (
-            <p role="alert" className="mt-3 text-sm text-destructive">
-              {cameraError} Gunakan input manual di bawah.
-            </p>
+            <Alert variant="destructive" className="mt-3">
+              <AlertDescription>
+                {cameraError} Gunakan input manual di bawah.
+              </AlertDescription>
+            </Alert>
           )}
           <p className="mt-3 text-sm text-muted-foreground">
             Validasi dilakukan secara online. Hanya tiket berlaku dan belum
@@ -253,46 +274,62 @@ function ScanPanel({ disabled }: { disabled: boolean }) {
       </Card>
 
       {!!feedback && (
-        <div
+        <Alert
           role="status"
           aria-live="polite"
-          className={`rounded-2xl border p-3 text-sm ${
+          className={cn(
             feedback.type === 'success'
               ? 'border-primary bg-primary/10 text-foreground'
               : 'border-destructive bg-destructive/10 text-destructive'
-          }`}
+          )}
         >
-          <p className="typo-label">{feedback.title}</p>
-          {!!feedback.detail && <p>{feedback.detail}</p>}
-        </div>
+          <AlertTitle className="typo-label">{feedback.title}</AlertTitle>
+          {!!feedback.detail && (
+            <AlertDescription>{feedback.detail}</AlertDescription>
+          )}
+        </Alert>
       )}
 
-      <Card>
-        <CardContent>
-          <CardTitle className="mb-1">Input manual</CardTitle>
-          <p className="mb-3 text-sm text-muted-foreground">
+      <Card className="gap-4">
+        <CardHeader className="gap-1">
+          <CardTitle>Input manual</CardTitle>
+          <p className="text-sm text-muted-foreground">
             Gunakan jika kamera tidak tersedia atau izin kamera ditolak.
           </p>
+        </CardHeader>
+        <CardContent>
           <form
-            className="flex gap-2"
             onSubmit={(event) => {
               event.preventDefault();
               void submitToken(manualToken);
             }}
           >
-            <Input
-              value={manualToken}
-              onChange={(event) => setManualToken(event.target.value)}
-              placeholder="Tempel token QR"
-              autoComplete="off"
-              disabled={submitting || disabled}
-            />
-            <Button
-              type="submit"
-              disabled={submitting || disabled || !manualToken.trim()}
-            >
-              Kirim
-            </Button>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="manual-token" className="sr-only">
+                  Token QR
+                </FieldLabel>
+                <InputGroup>
+                  <InputGroupInput
+                    id="manual-token"
+                    value={manualToken}
+                    onChange={(event) => setManualToken(event.target.value)}
+                    placeholder="Tempel token QR"
+                    autoComplete="off"
+                    disabled={submitting || disabled}
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupButton
+                      type="submit"
+                      disabled={submitting || disabled || !manualToken.trim()}
+                    >
+                      {submitting && <Spinner data-icon="inline-start" />}
+                      Kirim
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
+              </Field>
+            </FieldGroup>
           </form>
         </CardContent>
       </Card>
@@ -320,9 +357,9 @@ function ScanContent() {
 
   return (
     <PageSection>
-      <Card>
-        <CardContent>
-          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <Card className="gap-4">
+        <CardHeader>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle>Perjalanan</CardTitle>
               {!!selectedTrip && (
@@ -333,27 +370,34 @@ function ScanContent() {
                 </p>
               )}
             </div>
-            <Select
-              value={tripId ?? ''}
-              onValueChange={(value) =>
-                router.replace(`/staff/scan?trip=${value}`)
-              }
-              disabled={isLoading || !trips?.length}
-            >
-              <SelectTrigger aria-label="Pilih perjalanan" className="w-full sm:w-80">
-                <SelectValue placeholder="Pilih perjalanan" />
-              </SelectTrigger>
-              <SelectContent>
-                {(trips ?? []).map((trip) => (
-                  <SelectItem key={trip.id} value={trip.id}>
-                    {trip.route.originCity} → {trip.route.destinationCity} ·{' '}
-                    {formatDate(trip.departureAt)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <CardAction>
+              <Select
+                value={tripId ?? ''}
+                onValueChange={(value) =>
+                  router.replace(`/staff/scan?trip=${value}`)
+                }
+                disabled={isLoading || !trips?.length}
+              >
+                <SelectTrigger
+                  aria-label="Pilih perjalanan"
+                  className="w-full sm:w-80"
+                >
+                  <SelectValue placeholder="Pilih perjalanan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {(trips ?? []).map((trip) => (
+                      <SelectItem key={trip.id} value={trip.id}>
+                        {trip.route.originCity} → {trip.route.destinationCity} ·{' '}
+                        {formatDate(trip.departureAt)}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </CardAction>
           </div>
-        </CardContent>
+        </CardHeader>
       </Card>
 
       <ScanPanel key={tripId ?? 'none'} disabled={!tripId} />

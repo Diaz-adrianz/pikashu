@@ -25,7 +25,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 import {
   Table,
   TableBody,
@@ -94,55 +96,57 @@ export default function RefundsPage() {
           </CardHeader>
           <CardContent>
             <form
-              className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] md:items-start"
               onSubmit={(e) => {
                 e.preventDefault();
                 if (!form.orderId || form.reason.trim().length < 3) return;
                 request.run(form);
               }}
             >
-              <div className="grid gap-1">
-                <label className="typo-label" htmlFor="order-id">
-                  Order ID
-                </label>
-                <Input
-                  id="order-id"
-                  value={form.orderId}
-                  placeholder="PKH-XXXXXXXX"
-                  required
-                  onChange={(e) =>
-                    setForm((prevForm) => ({
-                      ...prevForm,
-                      orderId: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-              <div className="grid gap-1">
-                <label className="typo-label" htmlFor="refund-reason">
-                  Alasan
-                </label>
-                <Textarea
-                  id="refund-reason"
-                  value={form.reason}
-                  placeholder="Alasan refund"
-                  minLength={3}
-                  required
-                  onChange={(e) =>
-                    setForm((prevForm) => ({
-                      ...prevForm,
-                      reason: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-              <Button
-                type="submit"
-                className="md:mt-6"
-                disabled={request.isLoading}
-              >
-                Ajukan refund
-              </Button>
+              <FieldGroup className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] md:items-start">
+                <Field className="gap-1">
+                  <FieldLabel className="typo-label" htmlFor="order-id">
+                    Order ID
+                  </FieldLabel>
+                  <Input
+                    id="order-id"
+                    value={form.orderId}
+                    placeholder="PKH-XXXXXXXX"
+                    required
+                    onChange={(e) =>
+                      setForm((prevForm) => ({
+                        ...prevForm,
+                        orderId: e.target.value,
+                      }))
+                    }
+                  />
+                </Field>
+                <Field className="gap-1">
+                  <FieldLabel className="typo-label" htmlFor="refund-reason">
+                    Alasan
+                  </FieldLabel>
+                  <Textarea
+                    id="refund-reason"
+                    value={form.reason}
+                    placeholder="Alasan refund"
+                    minLength={3}
+                    required
+                    onChange={(e) =>
+                      setForm((prevForm) => ({
+                        ...prevForm,
+                        reason: e.target.value,
+                      }))
+                    }
+                  />
+                </Field>
+                <Button
+                  type="submit"
+                  className="md:mt-6"
+                  disabled={request.isLoading}
+                >
+                  {request.isLoading && <Spinner data-icon="inline-start" />}
+                  Ajukan refund
+                </Button>
+              </FieldGroup>
             </form>
           </CardContent>
         </Card>
@@ -203,7 +207,11 @@ export default function RefundsPage() {
                                 onComplete(item.id, item.payment.booking.code)
                               }
                             >
-                              <CircleCheckIcon />
+                              {complete.isLoading ? (
+                                <Spinner data-icon="inline-start" />
+                              ) : (
+                                <CircleCheckIcon data-icon="inline-start" />
+                              )}
                             </Button>
                           )}
                         </div>
@@ -230,14 +238,14 @@ export default function RefundsPage() {
             </p>
             {hasPrev && (
               <Button size="sm" variant="secondary" onClick={prev}>
-                <ChevronLeftIcon />
+                <ChevronLeftIcon data-icon="inline-start" />
                 Prev
               </Button>
             )}
             {hasNext && (
               <Button size="sm" variant="secondary" onClick={next}>
                 Next
-                <ChevronRightIcon />
+                <ChevronRightIcon data-icon="inline-end" />
               </Button>
             )}
           </CardFooter>

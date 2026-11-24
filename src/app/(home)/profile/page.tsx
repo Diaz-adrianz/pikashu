@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 import {
   Page,
   PageHeader,
@@ -144,7 +145,7 @@ export default function ProfilePage() {
                         />
                       </Field>
                       <div className="grid gap-4 sm:grid-cols-2">
-                        <Field>
+                        <Field data-disabled>
                           <FieldLabel htmlFor="email">Email</FieldLabel>
                           <Input
                             id="email"
@@ -165,6 +166,7 @@ export default function ProfilePage() {
                         </Field>
                       </div>
                       <Button type="submit" disabled={isSaving || !profile}>
+                        {isSaving && <Spinner data-icon="inline-start" />}
                         {isSaving ? 'Menyimpan...' : 'Simpan profil'}
                       </Button>
                     </FieldGroup>
@@ -218,6 +220,7 @@ export default function ProfilePage() {
                       </Field>
                     </div>
                     <Button type="submit" disabled={isChanging}>
+                      {isChanging && <Spinner data-icon="inline-start" />}
                       {isChanging ? 'Mengubah...' : 'Ubah password'}
                     </Button>
                     <p className="typo-caption text-muted-foreground">

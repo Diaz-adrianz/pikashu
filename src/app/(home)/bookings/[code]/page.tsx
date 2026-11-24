@@ -17,6 +17,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
 import { cancelBookingAction } from '@/features/booking/actions';
 import { useAction } from '@/hooks/use-action';
 import { useApi } from '@/hooks/use-api';
@@ -237,6 +238,7 @@ export default function BookingDetailPage() {
                       disabled={isCancelling}
                       onClick={onCancel}
                     >
+                      {isCancelling && <Spinner data-icon="inline-start" />}
                       Batalkan pemesanan
                     </Button>
                   </PageSection>

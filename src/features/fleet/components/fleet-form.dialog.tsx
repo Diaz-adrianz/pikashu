@@ -28,10 +28,12 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { FleetTypeOptions, SeatTierOptions } from '@/constants/options';
 import { LoadingOverlay } from '@/components/shared/loading';
 import { NotFoundData } from '@/components/shared/not-found';
@@ -154,11 +156,13 @@ function FleetFormDialog({
                             <SelectValue placeholder="Pilih" />
                           </SelectTrigger>
                           <SelectContent>
-                            {FleetTypeOptions.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))}
+                            <SelectGroup>
+                              {FleetTypeOptions.map((o) => (
+                                <SelectItem key={o.value} value={o.value}>
+                                  {o.label}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
                           </SelectContent>
                         </Select>
                         {fieldState.invalid && (
@@ -186,11 +190,13 @@ function FleetFormDialog({
                             <SelectValue placeholder="Pilih" />
                           </SelectTrigger>
                           <SelectContent>
-                            {SeatTierOptions.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))}
+                            <SelectGroup>
+                              {SeatTierOptions.map((o) => (
+                                <SelectItem key={o.value} value={o.value}>
+                                  {o.label}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
                           </SelectContent>
                         </Select>
                         {fieldState.invalid && (
@@ -255,6 +261,7 @@ function FleetFormDialog({
                 form="form-fleet"
                 disabled={!form.formState.isValid || isSaving}
               >
+                {isSaving && <Spinner data-icon="inline-start" />}
                 Simpan
               </Button>
             </DialogFooter>

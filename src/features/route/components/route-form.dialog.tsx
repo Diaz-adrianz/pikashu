@@ -30,10 +30,12 @@ import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useAction } from '@/hooks/use-action';
 import { useApi } from '@/hooks/use-api';
@@ -333,11 +335,13 @@ function RouteFormDialog({
                             <SelectValue placeholder="Pilih" />
                           </SelectTrigger>
                           <SelectContent>
-                            {STATUS_OPTIONS.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))}
+                            <SelectGroup>
+                              {STATUS_OPTIONS.map((o) => (
+                                <SelectItem key={o.value} value={o.value}>
+                                  {o.label}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
                           </SelectContent>
                         </Select>
                         {fieldState.invalid && (
@@ -380,6 +384,7 @@ function RouteFormDialog({
                 form="form-route"
                 disabled={!form.formState.isValid || isSaving}
               >
+                {isSaving && <Spinner data-icon="inline-start" />}
                 Simpan
               </Button>
             </DialogFooter>

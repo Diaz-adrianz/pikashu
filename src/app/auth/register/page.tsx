@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/input-group';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { useAction } from '@/hooks/use-action';
 import { registerUserAction } from '@/features/user/actions';
 import { toast } from 'sonner';
@@ -117,11 +118,12 @@ export default function RegisterPage() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                    <InputGroup aria-invalid={fieldState.invalid}>
+                    <InputGroup>
                       <InputGroupInput
                         {...field}
                         id={field.name}
                         type={showPassword ? 'text' : 'password'}
+                        aria-invalid={fieldState.invalid}
                       />
                       <InputGroupAddon align="inline-end">
                         <InputGroupButton
@@ -129,7 +131,11 @@ export default function RegisterPage() {
                           size={'icon-sm'}
                           onClick={() => setShowPassword((s) => !s)}
                         >
-                          {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                          {showPassword ? (
+                            <EyeOffIcon data-icon="inline-start" />
+                          ) : (
+                            <EyeIcon data-icon="inline-start" />
+                          )}
                         </InputGroupButton>
                       </InputGroupAddon>
                     </InputGroup>
@@ -145,6 +151,7 @@ export default function RegisterPage() {
                   type="submit"
                   disabled={!form.formState.isValid || isLoading}
                 >
+                  {isLoading && <Spinner data-icon="inline-start" />}
                   Daftar
                 </Button>
                 <FieldDescription className="text-center">

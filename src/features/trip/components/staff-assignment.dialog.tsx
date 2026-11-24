@@ -18,6 +18,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from '@/components/ui/field';
+import { Spinner } from '@/components/ui/spinner';
 import { LoadingOverlay } from '@/components/shared/loading';
 import { NotFoundData } from '@/components/shared/not-found';
 
@@ -108,28 +116,31 @@ function StaffAssignmentDialog({
           <NotFoundData data="Perjalanan" />
         ) : (
           <>
-            <div className="flex max-h-80 flex-col gap-2 overflow-y-auto rounded-xl border p-3">
-              {staff.map((s: StaffItem) => (
-                <label
-                  key={s.id}
-                  className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 hover:bg-muted"
-                >
-                  <Checkbox
-                    checked={selected.includes(s.id)}
-                    onCheckedChange={() => toggle(s.id)}
-                  />
-                  <span className="grid">
-                    <span className="typo-label">{s.name}</span>
-                    <small className="text-muted-foreground">{s.email}</small>
-                  </span>
-                </label>
-              ))}
-              {staff.length === 0 && (
-                <p className="text-sm text-muted-foreground">
-                  Belum ada staf aktif.
-                </p>
-              )}
-            </div>
+            <FieldSet>
+              <FieldLegend variant="label">Staf</FieldLegend>
+              <FieldGroup className="max-h-80 gap-2 overflow-y-auto rounded-xl border p-3">
+                {staff.map((s: StaffItem) => (
+                  <Field key={s.id} orientation="horizontal">
+                    <Checkbox
+                      id={`staff-${s.id}`}
+                      checked={selected.includes(s.id)}
+                      onCheckedChange={() => toggle(s.id)}
+                    />
+                    <FieldLabel htmlFor={`staff-${s.id}`}>
+                      <span className="grid">
+                        <span className="typo-label">{s.name}</span>
+                        <small className="text-muted-foreground">{s.email}</small>
+                      </span>
+                    </FieldLabel>
+                  </Field>
+                ))}
+                {staff.length === 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    Belum ada staf aktif.
+                  </p>
+                )}
+              </FieldGroup>
+            </FieldSet>
 
             <DialogFooter>
               <Button
@@ -137,7 +148,11 @@ function StaffAssignmentDialog({
                 disabled={isSaving || !trip}
                 onClick={() => trip && save(trip.id, selected)}
               >
-                <SaveIcon />
+                {isSaving ? (
+                  <Spinner data-icon="inline-start" />
+                ) : (
+                  <SaveIcon data-icon="inline-start" />
+                )}
                 Simpan
               </Button>
             </DialogFooter>

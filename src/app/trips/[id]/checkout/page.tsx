@@ -15,16 +15,19 @@ import {
   PageNav,
   PageSection,
 } from '@/components/shared/page';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldLabel } from '@/components/ui/field';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { Spinner } from '@/components/ui/spinner';
 import { createBookingAction } from '@/features/booking/actions';
 import { getSeatLayout } from '@/features/trip/seat-layout';
 import { useAction } from '@/hooks/use-action';
 import { useApi } from '@/hooks/use-api';
-import { formatCurrency } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 
 function Checkout() {
   const { id } = useParams<{ id: string }>();
@@ -155,8 +158,10 @@ function Checkout() {
                   </CardHeader>
                   <CardContent className="flex flex-col gap-4">
                     {status === 'unauthenticated' && (
-                      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-muted p-4">
-                        <p className="text-sm">Masuk untuk melanjutkan pemesanan.</p>
+                      <Alert className="flex flex-wrap items-center justify-between gap-2">
+                        <AlertDescription>
+                          Masuk untuk melanjutkan pemesanan.
+                        </AlertDescription>
                         <Button size="sm" asChild>
                           <Link
                             href={`/auth/login?callbackUrl=${encodeURIComponent(callback)}`}
@@ -164,7 +169,7 @@ function Checkout() {
                             Masuk
                           </Link>
                         </Button>
-                      </div>
+                      </Alert>
                     )}
                     {status === 'authenticated' &&
                       session?.user.role !== 'PASSENGER' && (
@@ -190,13 +195,14 @@ function Checkout() {
                               aria-label={`Kursi ${seat.number}`}
                               aria-pressed={active}
                               onClick={() => toggleSeat(seat.number)}
-                              className={`flex size-10 items-center justify-center rounded-xl border text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40 ${
+                              className={cn(
+                                'flex size-10 items-center justify-center rounded-xl border text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40',
                                 active
                                   ? 'border-primary bg-primary text-primary-foreground'
                                   : taken
                                     ? 'border-destructive/30 bg-destructive/10 text-destructive'
                                     : 'border-input bg-input/30 hover:border-primary'
-                              }`}
+                              )}
                             >
                               {seat.number}
                             </button>
@@ -204,25 +210,27 @@ function Checkout() {
                         })}
                       </div>
                     )}
-                    {chosen.map((number) => (
-                      <Field key={number}>
-                        <FieldLabel htmlFor={`passenger-${number}`}>
-                          Nama penumpang kursi {number}
-                        </FieldLabel>
-                        <Input
-                          id={`passenger-${number}`}
-                          value={names[number] ?? defaultName}
-                          onChange={(e) =>
-                            setNames((prev) => ({
-                              ...prev,
-                              [number]: e.target.value,
-                            }))
-                          }
-                          placeholder="Nama lengkap"
-                          required
-                        />
-                      </Field>
-                    ))}
+                    <FieldGroup className="gap-4">
+                      {chosen.map((number) => (
+                        <Field key={number}>
+                          <FieldLabel htmlFor={`passenger-${number}`}>
+                            Nama penumpang kursi {number}
+                          </FieldLabel>
+                          <Input
+                            id={`passenger-${number}`}
+                            value={names[number] ?? defaultName}
+                            onChange={(e) =>
+                              setNames((prev) => ({
+                                ...prev,
+                                [number]: e.target.value,
+                              }))
+                            }
+                            placeholder="Nama lengkap"
+                            required
+                          />
+                        </Field>
+                      ))}
+                    </FieldGroup>
                   </CardContent>
                 </Card>
 
@@ -231,38 +239,40 @@ function Checkout() {
                     <CardHeader>
                       <CardTitle className="text-lg">Layanan tambahan</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid gap-4 sm:grid-cols-2">
-                      {services.map((service) => (
-                        <Field key={service.id}>
-                          <FieldLabel htmlFor={`service-${service.id}`}>
-                            {service.name} ({formatCurrency(service.price)})
-                          </FieldLabel>
-                          <Input
-                            id={`service-${service.id}`}
-                            type="number"
-                            min={0}
-                            max={service.capacity ?? 99}
-                            value={quantities[service.serviceId] ?? 0}
-                            onChange={(e) =>
-                              setQuantities((prev) => ({
-                                ...prev,
-                                [service.serviceId]: Math.max(
-                                  0,
-                                  Math.min(
-                                    service.capacity ?? 99,
-                                    Number(e.target.value) || 0
+                    <CardContent>
+                      <FieldGroup className="grid gap-4 sm:grid-cols-2">
+                        {services.map((service) => (
+                          <Field key={service.id}>
+                            <FieldLabel htmlFor={`service-${service.id}`}>
+                              {service.name} ({formatCurrency(service.price)})
+                            </FieldLabel>
+                            <Input
+                              id={`service-${service.id}`}
+                              type="number"
+                              min={0}
+                              max={service.capacity ?? 99}
+                              value={quantities[service.serviceId] ?? 0}
+                              onChange={(e) =>
+                                setQuantities((prev) => ({
+                                  ...prev,
+                                  [service.serviceId]: Math.max(
+                                    0,
+                                    Math.min(
+                                      service.capacity ?? 99,
+                                      Number(e.target.value) || 0
+                                    ),
                                   ),
-                                ),
-                              }))
-                            }
-                          />
-                          <p className="typo-caption text-muted-foreground">
-                            {service.capacity === null
-                              ? 'Kuota tidak terbatas'
-                              : `Kuota: ${service.capacity}`}
-                          </p>
-                        </Field>
-                      ))}
+                                }))
+                              }
+                            />
+                            <p className="typo-caption text-muted-foreground">
+                              {service.capacity === null
+                                ? 'Kuota tidak terbatas'
+                                : `Kuota: ${service.capacity}`}
+                            </p>
+                          </Field>
+                        ))}
+                      </FieldGroup>
                     </CardContent>
                   </Card>
                 )}
@@ -289,7 +299,8 @@ function Checkout() {
                       )}
                     </span>
                   </div>
-                  <div className="flex justify-between border-t pt-3 text-base font-semibold">
+                  <Separator />
+                  <div className="flex justify-between text-base font-semibold">
                     <span>Total</span>
                     <span className="text-primary">{formatCurrency(total)}</span>
                   </div>
@@ -301,6 +312,7 @@ function Checkout() {
                       session?.user.role !== 'PASSENGER'
                     }
                   >
+                    {isCreating && <Spinner data-icon="inline-start" />}
                     {isCreating ? 'Membuat pemesanan...' : 'Buat pemesanan'}
                   </Button>
                   <p className="typo-caption text-muted-foreground">

@@ -19,16 +19,18 @@ import {
   PageNav,
   PageSection,
 } from '@/components/shared/page';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   SeatTierOptionsMap,
   FleetTypeOptionsMap,
 } from '@/constants/options';
 import { getSeatLayout } from '@/features/trip/seat-layout';
 import { useApi } from '@/hooks/use-api';
-import { formatCurrency } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 
 const MapContainer = dynamic(
   () => import('react-leaflet').then((m) => m.MapContainer),
@@ -95,8 +97,7 @@ function RouteMap({ route }: { route: Route }) {
     [route.destinationLat, route.destinationLng],
   ];
 
-  if (!icon)
-    return <div className="h-80 w-full animate-pulse rounded-2xl bg-muted" />;
+  if (!icon) return <Skeleton className="h-80 w-full rounded-2xl" />;
 
   return (
     <MapContainer
@@ -266,10 +267,10 @@ export default function TripDetailPage() {
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
                   {status === 'unauthenticated' && (
-                    <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-muted p-4">
-                      <p className="text-sm">
+                    <Alert className="flex flex-wrap items-center justify-between gap-2">
+                      <AlertDescription>
                         Masuk sebagai penumpang untuk memilih kursi.
-                      </p>
+                      </AlertDescription>
                       <Button size="sm" asChild>
                         <Link
                           href={`/auth/login?callbackUrl=${encodeURIComponent(`/trips/${id}`)}`}
@@ -277,7 +278,7 @@ export default function TripDetailPage() {
                           Masuk
                         </Link>
                       </Button>
-                    </div>
+                    </Alert>
                   )}
                   {status === 'authenticated' && !canBook && (
                     <p className="text-sm text-muted-foreground">
@@ -306,13 +307,14 @@ export default function TripDetailPage() {
                               aria-label={`Kursi ${seat.number}`}
                               aria-pressed={active}
                               onClick={() => toggleSeat(seat.number)}
-                              className={`flex size-10 items-center justify-center rounded-xl border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                              className={cn(
+                                'flex size-10 items-center justify-center rounded-xl border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40',
                                 active
                                   ? 'border-primary bg-primary text-primary-foreground'
                                   : taken
                                     ? 'border-destructive/30 bg-destructive/10 text-destructive'
                                     : 'border-input bg-input/30 hover:border-primary'
-                              }`}
+                              )}
                             >
                               {seat.number}
                             </button>

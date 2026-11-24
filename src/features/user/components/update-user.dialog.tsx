@@ -1,10 +1,12 @@
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { RoleOptions, UserStatusOptions } from '@/constants/options';
 import { useAction } from '@/hooks/use-action';
 import { useApi } from '@/hooks/use-api';
@@ -139,11 +141,13 @@ function UserUpdateDialog({
                           <SelectValue placeholder="Pilih" />
                         </SelectTrigger>
                         <SelectContent>
-                          {RoleOptions.map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
+                          <SelectGroup>
+                            {RoleOptions.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                       {fieldState.invalid && (
@@ -190,11 +194,13 @@ function UserUpdateDialog({
                           <SelectValue placeholder="Pilih" />
                         </SelectTrigger>
                         <SelectContent>
-                          {UserStatusOptions.map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
+                          <SelectGroup>
+                            {UserStatusOptions.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                       {fieldState.invalid && (
@@ -213,6 +219,7 @@ function UserUpdateDialog({
                 form="form-user-update"
                 disabled={!form.formState.isValid || update.isLoading}
               >
+                {update.isLoading && <Spinner data-icon="inline-start" />}
                 Simpan
               </Button>
             </DialogFooter>

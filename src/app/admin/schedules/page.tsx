@@ -23,6 +23,7 @@ import { Search } from '@/components/shared/search';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
 import {
   Table,
   TableBody,
@@ -115,11 +116,15 @@ export default function SchedulesPage() {
               disabled={generate.isLoading}
               onClick={() => generate.run()}
             >
-              <RefreshCwIcon />
+              {generate.isLoading ? (
+                <Spinner data-icon="inline-start" />
+              ) : (
+                <RefreshCwIcon data-icon="inline-start" />
+              )}
               Buat Perjalanan
             </Button>
             <Button onClick={() => formDialog.show({})}>
-              <PlusIcon />
+              <PlusIcon data-icon="inline-start" />
               Buat
             </Button>
           </>
@@ -178,7 +183,7 @@ export default function SchedulesPage() {
                             variant="ghost"
                             onClick={() => formDialog.show({ id: item.id })}
                           >
-                            <PencilIcon />
+                            <PencilIcon data-icon="inline-start" />
                           </Button>
                           <Button
                             size="icon-sm"
@@ -186,7 +191,11 @@ export default function SchedulesPage() {
                             disabled={toggle.isLoading}
                             onClick={() => onToggle(item)}
                           >
-                            <PowerIcon />
+                            {toggle.isLoading ? (
+                              <Spinner data-icon="inline-start" />
+                            ) : (
+                              <PowerIcon data-icon="inline-start" />
+                            )}
                           </Button>
                           <Button
                             size="icon-sm"
@@ -194,7 +203,7 @@ export default function SchedulesPage() {
                             className="text-destructive!"
                             onClick={() => onDelete(item)}
                           >
-                            <TrashIcon />
+                            <TrashIcon data-icon="inline-start" />
                           </Button>
                         </div>
                       </TableCell>
@@ -210,14 +219,14 @@ export default function SchedulesPage() {
             </p>
             {hasPrev && (
               <Button size="sm" variant="secondary" onClick={prev}>
-                <ChevronLeftIcon />
+                <ChevronLeftIcon data-icon="inline-start" />
                 Prev
               </Button>
             )}
             {hasNext && (
               <Button size="sm" variant="secondary" onClick={next}>
                 Next
-                <ChevronRightIcon />
+                <ChevronRightIcon data-icon="inline-end" />
               </Button>
             )}
           </CardFooter>

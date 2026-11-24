@@ -1,6 +1,6 @@
 import { LogoText } from '@/assets/images';
 import { Header, HeaderUser } from '@/components/shared/header';
-import { SidebarNav } from '@/components/shared/sidebar-nav';
+import { StaffSidebarNav } from '@/components/shared/sidebar-nav';
 import {
   Sidebar,
   SidebarContent,
@@ -15,12 +15,6 @@ import {
 import { authorized } from '@/lib/auth';
 import Image from 'next/image';
 import { ReactNode } from 'react';
-
-const MENUS = [
-  { icon: 'dashboard', href: '/staff', label: 'Dasbor' },
-  { icon: 'trip', href: '/staff/manifest', label: 'Pemesanan' },
-  { icon: 'qr', href: '/staff/scan', label: 'Pindai QR' },
-] as const;
 
 export default async function Layout({ children }: { children: ReactNode }) {
   await authorized(['STAFF'], 'redirect');
@@ -38,7 +32,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarNav menus={MENUS} />
+            <StaffSidebarNav />
           </SidebarGroup>
         </SidebarContent>
       </Sidebar>

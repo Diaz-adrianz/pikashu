@@ -88,7 +88,7 @@ export default function FacilitiesPage() {
         title="Fasilitas"
         action={
           <Button onClick={() => formDialog.show({})}>
-            <PlusIcon />
+            <PlusIcon data-icon="inline-start" />
             Buat
           </Button>
         }
@@ -151,7 +151,7 @@ export default function FacilitiesPage() {
                             title="Edit"
                             onClick={() => formDialog.show({ id: item.id })}
                           >
-                            <PencilIcon />
+                            <PencilIcon data-icon="inline-start" />
                           </Button>
                           <Button
                             size="icon-sm"
@@ -160,7 +160,7 @@ export default function FacilitiesPage() {
                             title="Hapus"
                             onClick={() => onDelete(item)}
                           >
-                            <TrashIcon />
+                            <TrashIcon data-icon="inline-start" />
                           </Button>
                         </div>
                       </TableCell>
@@ -182,7 +182,7 @@ export default function FacilitiesPage() {
                 disabled={isLoading}
                 onClick={prev}
               >
-                <ChevronLeftIcon />
+                <ChevronLeftIcon data-icon="inline-start" />
                 Prev
               </Button>
             )}
@@ -194,7 +194,7 @@ export default function FacilitiesPage() {
                 onClick={next}
               >
                 Next
-                <ChevronRightIcon />
+                <ChevronRightIcon data-icon="inline-end" />
               </Button>
             )}
           </CardFooter>

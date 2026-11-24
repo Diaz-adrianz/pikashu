@@ -155,11 +155,11 @@ function HeaderNavSheet({
           className={cn(className)}
           {...props}
         >
-          <MenuIcon />
+          <MenuIcon data-icon="inline-start" />
         </Button>
       </SheetTrigger>
       <SheetContent className="p-4" side="left" showCloseButton={false}>
-        <SheetTitle visually-hidden="true"></SheetTitle>
+        <SheetTitle className="sr-only">Navigasi</SheetTitle>
 
         <Image src={Logo} alt="Pikashu logo" className="mb-8 w-40" />
 

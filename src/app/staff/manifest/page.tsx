@@ -13,10 +13,17 @@ import {
   PageSection,
 } from '@/components/shared/page';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -63,9 +70,9 @@ function ManifestContent() {
 
   return (
     <PageSection>
-      <Card>
-        <CardContent>
-          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <Card className="gap-4">
+        <CardHeader>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle>Manifest penumpang</CardTitle>
               {!!selectedTrip && (
@@ -76,27 +83,35 @@ function ManifestContent() {
                 </p>
               )}
             </div>
-            <Select
-              value={tripId ?? ''}
-              onValueChange={(value) =>
-                router.replace(`/staff/manifest?trip=${value}`)
-              }
-              disabled={tripsLoading || !trips?.length}
-            >
-              <SelectTrigger aria-label="Pilih perjalanan" className="w-full sm:w-80">
-                <SelectValue placeholder="Pilih perjalanan" />
-              </SelectTrigger>
-              <SelectContent>
-                {(trips ?? []).map((trip) => (
-                  <SelectItem key={trip.id} value={trip.id}>
-                    {trip.route.originCity} → {trip.route.destinationCity} ·{' '}
-                    {formatDate(trip.departureAt)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <CardAction>
+              <Select
+                value={tripId ?? ''}
+                onValueChange={(value) =>
+                  router.replace(`/staff/manifest?trip=${value}`)
+                }
+                disabled={tripsLoading || !trips?.length}
+              >
+                <SelectTrigger
+                  aria-label="Pilih perjalanan"
+                  className="w-full sm:w-80"
+                >
+                  <SelectValue placeholder="Pilih perjalanan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {(trips ?? []).map((trip) => (
+                      <SelectItem key={trip.id} value={trip.id}>
+                        {trip.route.originCity} → {trip.route.destinationCity} ·{' '}
+                        {formatDate(trip.departureAt)}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </CardAction>
           </div>
-
+        </CardHeader>
+        <CardContent>
           <div className="rounded-2xl border">
             <Table>
               <TableHeader>

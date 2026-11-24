@@ -21,6 +21,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 import { ImgPlaceholder } from '@/assets/images';
 import { StarIcon, TrashIcon, UploadIcon } from 'lucide-react';
 import {
@@ -152,7 +153,11 @@ function FleetImagesDialog({
                         disabled={setMain.isLoading}
                         onClick={() => setMain.run(image.id)}
                       >
-                        <StarIcon />
+                        {setMain.isLoading ? (
+                          <Spinner data-icon="inline-start" />
+                        ) : (
+                          <StarIcon data-icon="inline-start" />
+                        )}
                       </Button>
                     )}
                     <Button
@@ -161,7 +166,11 @@ function FleetImagesDialog({
                       disabled={remove.isLoading}
                       onClick={() => onDelete(image.id)}
                     >
-                      <TrashIcon />
+                      {remove.isLoading ? (
+                        <Spinner data-icon="inline-start" />
+                      ) : (
+                        <TrashIcon data-icon="inline-start" />
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -176,7 +185,8 @@ function FleetImagesDialog({
             onClick={() => inputRef.current?.click()}
             disabled={!data || upload.isLoading}
           >
-            <UploadIcon />
+            <UploadIcon data-icon="inline-start" />
+            {upload.isLoading && <Spinner data-icon="inline-start" />}
             Unggah
           </Button>
         </DialogFooter>

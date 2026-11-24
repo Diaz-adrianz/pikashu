@@ -22,6 +22,15 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
+import {
   Table,
   TableBody,
   TableCell,
@@ -88,18 +97,27 @@ export default function TripsPage() {
                 isLoading={isLoading}
                 placeholder="Cari perjalanan..."
               />
-              <select
-                value={filter.status}
-                onChange={(e) =>
-                  setFilter((p) => ({ ...p, status: e.target.value }))
+              <Select
+                value={filter.status || 'ALL'}
+                onValueChange={(value) =>
+                  setFilter((p) => ({
+                    ...p,
+                    status: value === 'ALL' ? '' : value,
+                  }))
                 }
-                className="h-9 rounded-4xl border border-input bg-input/30 px-3 text-sm"
               >
-                <option value="">Semua status</option>
-                <option value="SCHEDULED">Terjadwal</option>
-                <option value="COMPLETED">Selesai</option>
-                <option value="CANCELLED">Dibatalkan</option>
-              </select>
+                <SelectTrigger aria-label="Status perjalanan">
+                  <SelectValue placeholder="Semua status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="ALL">Semua status</SelectItem>
+                    <SelectItem value="SCHEDULED">Terjadwal</SelectItem>
+                    <SelectItem value="COMPLETED">Selesai</SelectItem>
+                    <SelectItem value="CANCELLED">Dibatalkan</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="rounded-2xl border">
@@ -157,7 +175,7 @@ export default function TripsPage() {
                             title="Tuguhkan staf"
                             onClick={() => staffDialog.show({ id: item.id })}
                           >
-                            <UsersIcon />
+                            <UsersIcon data-icon="inline-start" />
                           </Button>
                           {item.status === 'SCHEDULED' && (
                             <Button
@@ -168,7 +186,11 @@ export default function TripsPage() {
                               disabled={cancel.isLoading}
                               onClick={() => onCancel(item)}
                             >
-                              <CircleXIcon />
+                              {cancel.isLoading ? (
+                                <Spinner data-icon="inline-start" />
+                              ) : (
+                                <CircleXIcon data-icon="inline-start" />
+                              )}
                             </Button>
                           )}
                         </div>
@@ -185,14 +207,14 @@ export default function TripsPage() {
             </p>
             {hasPrev && (
               <Button size="sm" variant="secondary" onClick={prev}>
-                <ChevronLeftIcon />
+                <ChevronLeftIcon data-icon="inline-start" />
                 Prev
               </Button>
             )}
             {hasNext && (
               <Button size="sm" variant="secondary" onClick={next}>
                 Next
-                <ChevronRightIcon />
+                <ChevronRightIcon data-icon="inline-end" />
               </Button>
             )}
           </CardFooter>

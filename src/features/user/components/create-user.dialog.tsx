@@ -23,10 +23,12 @@ import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { RoleOptions } from '@/constants/options';
 
 function UserCreateDialog({
@@ -144,11 +146,13 @@ function UserCreateDialog({
                       <SelectValue placeholder="Pilih" />
                     </SelectTrigger>
                     <SelectContent>
-                      {RoleOptions.map((o) => (
-                        <SelectItem key={o.value} value={o.value}>
-                          {o.label}
-                        </SelectItem>
-                      ))}
+                      <SelectGroup>
+                        {RoleOptions.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                   {fieldState.invalid && (
@@ -167,6 +171,7 @@ function UserCreateDialog({
             form="form-user-create"
             disabled={!form.formState.isValid || isLoading}
           >
+            {isLoading && <Spinner data-icon="inline-start" />}
             Simpan
           </Button>
         </DialogFooter>

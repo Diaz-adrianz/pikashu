@@ -22,6 +22,7 @@ import { Search } from '@/components/shared/search';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
 import {
   Table,
   TableBody,
@@ -113,7 +114,7 @@ export default function RoutesPage() {
         title="Rute"
         action={
           <Button onClick={() => formDialog.show({})}>
-            <PlusIcon />
+            <PlusIcon data-icon="inline-start" />
             Buat
           </Button>
         }
@@ -174,7 +175,7 @@ export default function RoutesPage() {
                             title="Edit"
                             onClick={() => formDialog.show({ id: item.id })}
                           >
-                            <PencilIcon />
+                            <PencilIcon data-icon="inline-start" />
                           </Button>
                           <Button
                             size="icon-sm"
@@ -187,7 +188,11 @@ export default function RoutesPage() {
                             disabled={power.isLoading}
                             onClick={() => onToggle(item)}
                           >
-                            <PowerIcon />
+                            {power.isLoading ? (
+                              <Spinner data-icon="inline-start" />
+                            ) : (
+                              <PowerIcon data-icon="inline-start" />
+                            )}
                           </Button>
                           <Button
                             size="icon-sm"
@@ -201,7 +206,7 @@ export default function RoutesPage() {
                             disabled={item._count.trips > 0}
                             onClick={() => onDelete(item)}
                           >
-                            <TrashIcon />
+                            <TrashIcon data-icon="inline-start" />
                           </Button>
                         </div>
                       </TableCell>
@@ -223,7 +228,11 @@ export default function RoutesPage() {
                 disabled={isLoading}
                 onClick={prev}
               >
-                <ChevronLeftIcon />
+                {isLoading ? (
+                  <Spinner data-icon="inline-start" />
+                ) : (
+                  <ChevronLeftIcon data-icon="inline-start" />
+                )}
                 Prev
               </Button>
             )}
@@ -235,7 +244,11 @@ export default function RoutesPage() {
                 onClick={next}
               >
                 Next
-                <ChevronRightIcon />
+                {isLoading ? (
+                  <Spinner data-icon="inline-end" />
+                ) : (
+                  <ChevronRightIcon data-icon="inline-end" />
+                )}
               </Button>
             )}
           </CardFooter>

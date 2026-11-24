@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Page, PageSection } from '@/components/shared/page';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Field, FieldLabel } from '@/components/ui/field';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -69,75 +70,78 @@ export default function HomePage() {
 
         <Card className="mx-auto mt-10 w-full max-w-6xl shadow-xl">
           <CardContent>
-            <form
-              onSubmit={onSubmit}
-              className="grid gap-4 md:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_0.6fr_0.8fr_auto]"
-            >
-              <Field>
-                <FieldLabel htmlFor="originCity">Kota asal</FieldLabel>
-                <Input
-                  id="originCity"
-                  placeholder="Contoh: Jakarta"
-                  value={form.originCity}
-                  onChange={(e) => set('originCity', e.target.value)}
-                  required
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="destinationCity">Kota tujuan</FieldLabel>
-                <Input
-                  id="destinationCity"
-                  placeholder="Contoh: Bandung"
-                  value={form.destinationCity}
-                  onChange={(e) => set('destinationCity', e.target.value)}
-                  required
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="departureDate">Tanggal berangkat</FieldLabel>
-                <Input
-                  id="departureDate"
-                  type="date"
-                  value={form.departureDate}
-                  onChange={(e) => set('departureDate', e.target.value)}
-                  required
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="seats">Jumlah kursi</FieldLabel>
-                <Input
-                  id="seats"
-                  type="number"
-                  min={1}
-                  max={40}
-                  value={form.seats}
-                  onChange={(e) => set('seats', e.target.value)}
-                  required
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="seatTier">Kelas kursi</FieldLabel>
-                <Select
-                  value={form.seatTier}
-                  onValueChange={(value) => set('seatTier', value)}
-                >
-                  <SelectTrigger id="seatTier" className="w-full">
-                    <SelectValue placeholder="Semua kelas" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SeatTierOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field className="justify-end">
-                <Button type="submit" className="lg:self-end">
-                  Cari perjalanan
-                </Button>
-              </Field>
+            <form onSubmit={onSubmit}>
+              <FieldGroup className="grid gap-4 md:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_0.6fr_0.8fr_auto]">
+                <Field>
+                  <FieldLabel htmlFor="originCity">Kota asal</FieldLabel>
+                  <Input
+                    id="originCity"
+                    placeholder="Contoh: Jakarta"
+                    value={form.originCity}
+                    onChange={(e) => set('originCity', e.target.value)}
+                    required
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="destinationCity">Kota tujuan</FieldLabel>
+                  <Input
+                    id="destinationCity"
+                    placeholder="Contoh: Bandung"
+                    value={form.destinationCity}
+                    onChange={(e) => set('destinationCity', e.target.value)}
+                    required
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="departureDate">
+                    Tanggal berangkat
+                  </FieldLabel>
+                  <Input
+                    id="departureDate"
+                    type="date"
+                    value={form.departureDate}
+                    onChange={(e) => set('departureDate', e.target.value)}
+                    required
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="seats">Jumlah kursi</FieldLabel>
+                  <Input
+                    id="seats"
+                    type="number"
+                    min={1}
+                    max={40}
+                    value={form.seats}
+                    onChange={(e) => set('seats', e.target.value)}
+                    required
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="seatTier">Kelas kursi</FieldLabel>
+                  <Select
+                    value={form.seatTier}
+                    onValueChange={(value) => set('seatTier', value)}
+                  >
+                    <SelectTrigger id="seatTier" className="w-full">
+                      <SelectValue placeholder="Semua kelas" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {SeatTierOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field className="justify-end">
+                  <Button type="submit" className="lg:self-end">
+                    Cari perjalanan
+                  </Button>
+                </Field>
+              </FieldGroup>
             </form>
           </CardContent>
         </Card>

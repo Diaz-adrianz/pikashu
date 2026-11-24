@@ -95,7 +95,7 @@ export default function TicketPage() {
                           width={220}
                           height={220}
                           unoptimized
-                          className="size-55 rounded-xl bg-white p-2"
+                          className="size-55 rounded-xl bg-card p-2"
                         />
                       ) : (
                         <p className="text-sm text-muted-foreground">

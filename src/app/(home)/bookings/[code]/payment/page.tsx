@@ -18,6 +18,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Spinner } from '@/components/ui/spinner';
 import { createPaymentAction } from '@/features/booking/actions';
 import { useAction } from '@/hooks/use-action';
 import { useApi } from '@/hooks/use-api';
@@ -224,7 +226,8 @@ export default function PaymentPage() {
                           </span>
                         </div>
                       ))}
-                      <div className="flex justify-between border-t pt-3 text-base font-semibold">
+                      <Separator />
+                      <div className="flex justify-between text-base font-semibold">
                         <span>Total pembayaran</span>
                         <span className="text-primary">
                           {formatCurrency(booking.totalAmount)}
@@ -259,6 +262,7 @@ export default function PaymentPage() {
                               disabled={isCreating}
                               onClick={() => createPayment(booking.id)}
                             >
+                              {isCreating && <Spinner data-icon="inline-start" />}
                               {isCreating ? 'Menyiapkan pembayaran...' : 'Bayar'}
                             </Button>
                           ) : (
@@ -271,6 +275,7 @@ export default function PaymentPage() {
                             disabled={syncing}
                             onClick={() => void sync()}
                           >
+                            {syncing && <Spinner data-icon="inline-start" />}
                             {syncing ? 'Memperbarui...' : 'Perbarui status'}
                           </Button>
                         </>

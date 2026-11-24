@@ -17,8 +17,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+} from '@/components/ui/empty';
+import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -147,11 +153,13 @@ export default function BookingsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {STATUSES.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
+                  <SelectGroup>
+                    {STATUSES.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
@@ -193,11 +201,13 @@ export default function BookingsPage() {
                 </Card>
               ))}
               {!isLoading && !visible.length && (
-                <Card>
-                  <CardContent className="text-center text-muted-foreground">
-                    Belum ada pemesanan yang cocok.
-                  </CardContent>
-                </Card>
+                <Empty>
+                  <EmptyHeader>
+                    <EmptyDescription>
+                      Belum ada pemesanan yang cocok.
+                    </EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
               )}
               {isLoading && (
                 <p className="py-8 text-center text-muted-foreground">
@@ -212,7 +222,7 @@ export default function BookingsPage() {
               </p>
               {hasPrev && (
                 <Button size="sm" variant="secondary" onClick={prev}>
-                  <ChevronLeftIcon />
+                  <ChevronLeftIcon data-icon="inline-start" />
                   Prev
                 </Button>
               )}
@@ -222,7 +232,7 @@ export default function BookingsPage() {
               {hasNext && (
                 <Button size="sm" variant="secondary" onClick={next}>
                   Next
-                  <ChevronRightIcon />
+                  <ChevronRightIcon data-icon="inline-end" />
                 </Button>
               )}
             </div>

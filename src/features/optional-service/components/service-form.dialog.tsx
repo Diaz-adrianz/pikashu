@@ -21,6 +21,7 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useAction } from '@/hooks/use-action';
 import { useApi } from '@/hooks/use-api';
@@ -218,6 +219,7 @@ function ServiceFormDialog({
                 form="form-service"
                 disabled={!form.formState.isValid || isSaving}
               >
+                {isSaving && <Spinner data-icon="inline-start" />}
                 Simpan
               </Button>
             </DialogFooter>

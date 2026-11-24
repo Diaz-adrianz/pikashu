@@ -22,6 +22,7 @@ import { Search } from '@/components/shared/search';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
 import {
   Table,
   TableBody,
@@ -121,7 +122,7 @@ export default function FleetsPage() {
         title="Armada"
         action={
           <Button onClick={() => formDialog.show({})}>
-            <PlusIcon />
+            <PlusIcon data-icon="inline-start" />
             Buat
           </Button>
         }
@@ -204,7 +205,7 @@ export default function FleetsPage() {
                             title="Gambar"
                             onClick={() => imagesDialog.show({ id: item.id })}
                           >
-                            <ImagesIcon />
+                            <ImagesIcon data-icon="inline-start" />
                           </Button>
                           <Button
                             size="icon-sm"
@@ -212,7 +213,7 @@ export default function FleetsPage() {
                             title="Edit"
                             onClick={() => formDialog.show({ id: item.id })}
                           >
-                            <PencilIcon />
+                            <PencilIcon data-icon="inline-start" />
                           </Button>
                           <Button
                             size="icon-sm"
@@ -225,7 +226,11 @@ export default function FleetsPage() {
                             disabled={power.isLoading}
                             onClick={() => onToggle(item)}
                           >
-                            <PowerIcon />
+                            {power.isLoading ? (
+                              <Spinner data-icon="inline-start" />
+                            ) : (
+                              <PowerIcon data-icon="inline-start" />
+                            )}
                           </Button>
                           <Button
                             size="icon-sm"
@@ -234,7 +239,7 @@ export default function FleetsPage() {
                             title="Hapus"
                             onClick={() => onDelete(item)}
                           >
-                            <TrashIcon />
+                            <TrashIcon data-icon="inline-start" />
                           </Button>
                         </div>
                       </TableCell>
@@ -256,7 +261,11 @@ export default function FleetsPage() {
                 disabled={isLoading}
                 onClick={prev}
               >
-                <ChevronLeftIcon />
+                {isLoading ? (
+                  <Spinner data-icon="inline-start" />
+                ) : (
+                  <ChevronLeftIcon data-icon="inline-start" />
+                )}
                 Prev
               </Button>
             )}
@@ -268,7 +277,11 @@ export default function FleetsPage() {
                 onClick={next}
               >
                 Next
-                <ChevronRightIcon />
+                {isLoading ? (
+                  <Spinner data-icon="inline-end" />
+                ) : (
+                  <ChevronRightIcon data-icon="inline-end" />
+                )}
               </Button>
             )}
           </CardFooter>
