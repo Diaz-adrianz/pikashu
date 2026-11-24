@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { RoleOptionsMap } from '@/constants/options';
+import { RoleOptionsMap, UserStatusOptionsMap } from '@/constants/options';
 import { deleteUserAction } from '@/features/user/actions';
 import { UserCreateDialog } from '@/features/user/components/create-user.dialog';
 import {
@@ -119,6 +119,7 @@ export default function UsersPage() {
                     <TableHead>No</TableHead>
                     <TableHead>User</TableHead>
                     <TableHead>Role</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -145,6 +146,17 @@ export default function UsersPage() {
                       <TableCell>
                         <Badge variant={'secondary'}>
                           {RoleOptionsMap[item.role].label}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            item.status === 'ACTIVE'
+                              ? 'default'
+                              : 'destructive'
+                          }
+                        >
+                          {UserStatusOptionsMap[item.status].label}
                         </Badge>
                       </TableCell>
                       <TableCell>

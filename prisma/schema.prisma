@@ -1,72 +1,443 @@
 generator client {
-    provider = "prisma-client"
-    output   = "../src/generated/prisma"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
-    provider = "postgresql"
+  provider = "postgresql"
 }
 
 // Auth
 // =========================================================================
 enum Role {
-    ADMIN
-    PASSENGER
-    STAFF
+  ADMIN
+  PASSENGER
+  STAFF
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+// Fleet
+// =========================================================================
+enum FleetType {
+  BUS
+  MINIBUS
+}
+
+enum FleetStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum SeatTier {
+  ECONOMY
+  BUSINESS
+}
+
+// Route
+// =========================================================================
+enum RouteStatus {
+  ACTIVE
+  INACTIVE
+}
+
+// Schedule
+// =========================================================================
+enum ScheduleStatus {
+  ACTIVE
+  INACTIVE
+}
+
+// Trip
+// =========================================================================
+enum TripStatus {
+  SCHEDULED
+  CANCELLED
+  COMPLETED
+}
+
+// Optional service
+// =========================================================================
+enum OptionalServiceStatus {
+  ACTIVE
+  INACTIVE
+}
+
+// Booking
+// =========================================================================
+enum BookingStatus {
+  PENDING_PAYMENT
+  PAID
+  CANCELLED
+  EXPIRED
+  COMPLETED
+}
+
+enum TicketStatus {
+  VALID
+  CANCELLED
+}
+
+enum BoardingStatus {
+  NOT_BOARDED
+  BOARDED
+}
+
+// Payment
+// =========================================================================
+enum PaymentStatus {
+  CREATING
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+}
+
+enum RefundStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
 }
 
 model Account {
-    id                String  @id @default(cuid())
-    userId            String  @map("user_id")
-    type              String
-    provider          String
-    providerAccountId String  @map("provider_account_id")
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([provider, providerAccountId])
-    @@map("accounts")
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique @map("session_token")
-    userId       String   @map("user_id")
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@map("sessions")
+  @@map("sessions")
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime? @map("email_verified")
-    image         String?
-    password      String?
-    role          Role      @default(PASSENGER)
+  id            String     @id @default(cuid())
+  name          String?
+  email         String?    @unique
+  emailVerified DateTime?  @map("email_verified")
+  image         String?
+  password      String?
+  phone         String?
+  role          Role       @default(PASSENGER)
+  status        UserStatus @default(ACTIVE)
 
-    accounts Account[]
-    sessions Session[]
+  accounts      Account[]
+  sessions      Session[]
+  bookings      Booking[]
+  assignedTrips TripStaff[]
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@map("users")
+  @@map("users")
 }
 
 model VerificationToken {
-    identifier String
-    token      String
-    expires    DateTime
+  identifier String
+  token      String
+  expires    DateTime
 
-    @@unique([identifier, token])
-    @@map("verification_tokens")
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Fleet {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  type        FleetType
+  status      FleetStatus @default(ACTIVE)
+  seatTier    SeatTier    @map("seat_tier")
+  price       Int
+
+  images    FleetImage[]
+  schedules Schedule[]
+  trips     Trip[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@map("fleets")
+}
+
+model FleetImage {
+  id        String   @id @default(cuid())
+  fleetId   String   @map("fleet_id")
+  path      String
+  isMain    Boolean  @default(false) @map("is_main")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  fleet Fleet @relation(fields: [fleetId], references: [id], onDelete: Cascade)
+
+  @@index([fleetId])
+  @@map("fleet_images")
+}
+
+model Facility {
+  id          String   @id @default(cuid())
+  seatTier    SeatTier @map("seat_tier")
+  title       String
+  description String
+  image       String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([seatTier])
+  @@map("facilities")
+}
+
+model Route {
+  id              String      @id @default(cuid())
+  name            String
+  originCity      String      @map("origin_city")
+  destinationCity String      @map("destination_city")
+  originLat       Float       @map("origin_lat")
+  originLng       Float       @map("origin_lng")
+  destinationLat  Float       @map("destination_lat")
+  destinationLng  Float       @map("destination_lng")
+  path            Json?
+  durationMinutes Int         @map("duration_minutes")
+  status          RouteStatus @default(ACTIVE)
+
+  schedules Schedule[]
+  trips     Trip[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([originCity, destinationCity])
+  @@map("routes")
+}
+
+model Schedule {
+  id            String         @id @default(cuid())
+  routeId       String         @map("route_id")
+  fleetId       String         @map("fleet_id")
+  departureTime String         @map("departure_time")
+  status        ScheduleStatus @default(ACTIVE)
+
+  route Route  @relation(fields: [routeId], references: [id], onDelete: Restrict)
+  fleet Fleet  @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  trips Trip[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([routeId, fleetId, departureTime])
+  @@index([status])
+  @@map("schedules")
+}
+
+model Trip {
+  id          String     @id @default(cuid())
+  scheduleId  String     @map("schedule_id")
+  routeId     String     @map("route_id")
+  fleetId     String     @map("fleet_id")
+  departureAt DateTime   @map("departure_at")
+  arrivalAt   DateTime   @map("arrival_at")
+  price       Int
+  seatTier    SeatTier   @map("seat_tier")
+  capacity    Int
+  facilities  Json
+  status      TripStatus @default(SCHEDULED)
+
+  schedule Schedule @relation(fields: [scheduleId], references: [id], onDelete: Restrict)
+  route    Route    @relation(fields: [routeId], references: [id], onDelete: Restrict)
+  fleet    Fleet    @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+
+  optionalServices TripOptionalService[]
+  staff            TripStaff[]
+  bookings         Booking[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  tickets   Ticket[]
+
+  @@unique([scheduleId, departureAt])
+  @@index([status, departureAt])
+  @@index([routeId])
+  @@index([fleetId])
+  @@map("trips")
+}
+
+model TripOptionalService {
+  id        String @id @default(cuid())
+  tripId    String @map("trip_id")
+  serviceId String @map("service_id")
+  name      String
+  price     Int
+  capacity  Int?
+
+  trip     Trip                     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  service  OptionalService          @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  bookings BookingOptionalService[]
+
+  @@unique([tripId, serviceId])
+  @@index([serviceId])
+  @@map("trip_optional_services")
+}
+
+model OptionalService {
+  id          String                @id @default(cuid())
+  name        String
+  description String
+  price       Int
+  capacity    Int?
+  status      OptionalServiceStatus @default(ACTIVE)
+
+  tripServices TripOptionalService[]
+  bookings     BookingOptionalService[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@map("optional_services")
+}
+
+model TripStaff {
+  tripId     String   @map("trip_id")
+  staffId    String   @map("staff_id")
+  assignedAt DateTime @default(now()) @map("assigned_at")
+
+  trip  Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  staff User @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@id([tripId, staffId])
+  @@index([staffId])
+  @@map("trip_staff")
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  code        String        @unique
+  userId      String        @map("user_id")
+  tripId      String        @map("trip_id")
+  status      BookingStatus @default(PENDING_PAYMENT)
+  totalAmount Int           @map("total_amount")
+  expiresAt   DateTime      @map("expires_at")
+  paidAt      DateTime?     @map("paid_at")
+  cancelledAt DateTime?     @map("cancelled_at")
+
+  user             User                     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  trip             Trip                     @relation(fields: [tripId], references: [id], onDelete: Restrict)
+  tickets          Ticket[]
+  optionalServices BookingOptionalService[]
+  payment          Payment?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId, createdAt])
+  @@index([tripId, status])
+  @@index([status, expiresAt])
+  @@map("bookings")
+}
+
+model BookingOptionalService {
+  id                    String @id @default(cuid())
+  bookingId             String @map("booking_id")
+  tripOptionalServiceId String @map("trip_optional_service_id")
+  serviceId             String @map("service_id")
+  name                  String
+  price                 Int
+  quantity              Int
+
+  booking             Booking             @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  tripOptionalService TripOptionalService @relation(fields: [tripOptionalServiceId], references: [id], onDelete: Restrict)
+  service             OptionalService     @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+
+  @@unique([bookingId, serviceId])
+  @@index([tripOptionalServiceId])
+  @@map("booking_optional_services")
+}
+
+model Ticket {
+  id             String         @id @default(cuid())
+  bookingId      String         @map("booking_id")
+  tripId         String         @map("trip_id")
+  seatNumber     String         @map("seat_number")
+  passengerName  String         @map("passenger_name")
+  code           String         @unique
+  qrToken        String         @unique @map("qr_token")
+  status         TicketStatus   @default(VALID)
+  boardingStatus BoardingStatus @default(NOT_BOARDED) @map("boarding_status")
+  boardedAt      DateTime?      @map("boarded_at")
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  trip    Trip    @relation(fields: [tripId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tripId, seatNumber])
+  @@index([bookingId])
+  @@map("tickets")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  bookingId     String        @unique @map("booking_id")
+  orderId       String        @unique @map("order_id")
+  amount        Int
+  status        PaymentStatus @default(PENDING)
+  token         String?
+  redirectUrl   String?       @map("redirect_url")
+  transactionId String?       @map("transaction_id")
+  method        String?
+  paidAt        DateTime?     @map("paid_at")
+
+  booking Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  refunds Refund[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@map("payments")
+}
+
+model Refund {
+  id               String       @id @default(cuid())
+  paymentId        String       @map("payment_id")
+  amount           Int
+  status           RefundStatus @default(PENDING)
+  reason           String
+  providerRefundId String?      @map("provider_refund_id")
+  idempotencyKey   String       @unique @map("idempotency_key")
+  note             String?
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([paymentId])
+  @@index([status])
+  @@map("refunds")
 }

@@ -9,12 +9,22 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 
 export function resolveUploadPath(filename: string): string {
   // Prevent directory traversal
-  const sanitized = path.basename(filename);
-  return path.join(UPLOAD_DIR, sanitized);
+  const parts = filename.split(/[\\/]+/).filter((p) => p && p !== '.' && p !== '..');
+  return path.join(UPLOAD_DIR, ...parts);
 }
 
-export function saveUploadFile(file: Buffer | Uint8Array, filename: string): string {
-  const filepath = resolveUploadPath(filename);
+export function saveUploadFile(
+  file: Buffer | Uint8Array,
+  filename: string,
+  dir?: string
+): string {
+  const relative = dir ? path.posix.join(dir, filename) : filename,
+    filepath = resolveUploadPath(relative);
+  fs.mkdirSync(path.dirname(filepath), { recursive: true });
   fs.writeFileSync(filepath, file);
-  return filename;
+  return relative;
+}
+
+export function deleteUploadFile(relative: string) {
+  fs.rmSync(resolveUploadPath(relative), { force: true });
 }

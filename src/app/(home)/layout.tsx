@@ -12,6 +12,8 @@ import { ReactNode } from 'react';
 
 const NAVS: NavItem[] = [
   { href: '/', label: 'Cari' },
+  { href: '/trips', label: 'Perjalanan' },
+  { href: '/bookings', label: 'Pemesanan' },
   { href: '/facilities', label: 'Fasilitas' },
   { href: '/about-us', label: 'Tentang Kami' },
 ];

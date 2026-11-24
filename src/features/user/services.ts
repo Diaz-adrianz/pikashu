@@ -1,8 +1,9 @@
 import { Prisma } from '@/generated/prisma/client';
-import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { CreateUser, RegisterUser, UpdateUser } from './schemas';
 import { ActionError } from '@/lib/action';
+import { prisma } from '@/lib/prisma';
+import { CreateUser, RegisterUser, UpdateUser } from './schemas';
+import { ChangePassword, UpdateProfile } from './profile-schemas';
 
 export async function registerUser(data: RegisterUser) {
   return createUser({ ...data, role: 'PASSENGER' });
@@ -26,7 +27,15 @@ export async function readUsers(opts: {
       where,
       skip,
       take: opts.limit,
-      select: { id: true, name: true, email: true, image: true, role: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        image: true,
+        role: true,
+        status: true,
+      },
       orderBy: { createdAt: 'desc' },
     }),
     prisma.user.count({ where }),
@@ -54,4 +63,32 @@ export async function updateUser(id: string, data: UpdateUser) {
 
 export async function deleteUser(id: string) {
   return prisma.user.delete({ where: { id }, omit: { password: true } });
+}
+
+export async function readProfile(userId: string) {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, name: true, email: true, image: true, phone: true },
+  });
+}
+
+export async function updateProfile(userId: string, data: UpdateProfile) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { name: data.name, phone: data.phone || null },
+    select: { id: true, name: true, email: true, image: true, phone: true },
+  });
+}
+
+export async function changePassword(userId: string, data: ChangePassword) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user?.password)
+    throw new ActionError('Akun Google tidak dapat mengubah password di sini');
+  const ok = await bcrypt.compare(data.currentPassword, user.password);
+  if (!ok) throw new ActionError('Password saat ini salah');
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { password: await bcrypt.hash(data.newPassword, 12) },
+  });
 }

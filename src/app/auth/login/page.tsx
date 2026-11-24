@@ -33,6 +33,13 @@ export default function LoginPage() {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const callbackUrl = () => {
+    if (typeof window === 'undefined') return '/';
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get('callback') ?? params.get('callbackUrl') ?? '/';
+    return target.startsWith('/') && !target.startsWith('//') ? target : '/';
+  };
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -42,9 +49,12 @@ export default function LoginPage() {
       password: fd.get('password'),
       redirect: false,
     });
-    if (res?.error) toast.error('Email atau password salah');
+    if (res?.error) {
+      toast.error('Email atau password salah');
+      return;
+    }
 
-    router.push('/');
+    router.push(callbackUrl());
     router.refresh();
   };
 
@@ -61,7 +71,7 @@ export default function LoginPage() {
               <Button
                 variant="outline"
                 type="button"
-                onClick={() => signIn('google', { callbackUrl: '/' })}
+                onClick={() => signIn('google', { callbackUrl: callbackUrl() })}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                   <path

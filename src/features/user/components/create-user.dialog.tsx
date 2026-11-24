@@ -43,6 +43,7 @@ function UserCreateDialog({
       email: '',
       password: '',
       role: 'STAFF',
+      status: 'ACTIVE',
     },
   });
 

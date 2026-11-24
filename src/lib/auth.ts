@@ -33,6 +33,7 @@ export const authOptions: AuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
       name: 'Credentials',
@@ -46,7 +47,7 @@ export const authOptions: AuthOptions = {
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
-        if (!user?.password) return null;
+        if (!user?.password || user.status === 'DISABLED') return null;
         const ok = await bcrypt.compare(credentials.password, user.password);
         return ok ? user : null;
       },
@@ -54,6 +55,9 @@ export const authOptions: AuthOptions = {
   ],
 
   callbacks: {
+    async signIn({ user }) {
+      return user.status !== 'DISABLED';
+    },
     async jwt({ token, account }) {
       if (account?.provider === 'credentials') token.credentials = true;
       return token;
@@ -61,6 +65,7 @@ export const authOptions: AuthOptions = {
     async session({ session, user }) {
       session.user.id = user.id;
       session.user.role = user.role;
+      session.user.status = user.status;
       return session;
     },
   },
@@ -107,7 +112,7 @@ export async function authorized(
 ): Promise<Session | null> {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user) {
+  if (!session?.user || session.user.status === 'DISABLED') {
     if (strategy === 'redirect') {
       const path = (await headers()).get('x-pathname') || '/';
       redirect(`/auth/login?callback=${encodeURIComponent(path)}`, 'replace');

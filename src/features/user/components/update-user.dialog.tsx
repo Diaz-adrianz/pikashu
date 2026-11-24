@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { RoleOptions } from '@/constants/options';
+import { RoleOptions, UserStatusOptions } from '@/constants/options';
 import { useAction } from '@/hooks/use-action';
 import { useApi } from '@/hooks/use-api';
 import { DialogState } from '@/hooks/use-dialog';
@@ -57,7 +57,7 @@ function UserUpdateDialog({
   const form = useForm<UpdateUser>({
     resolver: zodResolver(updateUserSchema),
     mode: 'onChange',
-    defaultValues: { name: '', email: '', role: 'STAFF' },
+    defaultValues: { name: '', email: '', role: 'STAFF', phone: '', status: 'ACTIVE' },
     values: data && { ...data },
   });
 
@@ -140,6 +140,57 @@ function UserUpdateDialog({
                         </SelectTrigger>
                         <SelectContent>
                           {RoleOptions.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+                <Controller
+                  name="phone"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Telepon</FieldLabel>
+                      <Input
+                        {...field}
+                        value={field.value ?? ''}
+                        id={field.name}
+                        aria-invalid={fieldState.invalid}
+                        type="tel"
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+
+                <Controller
+                  name="status"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Status</FieldLabel>
+                      <Select
+                        name={field.name}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger
+                          id={field.name}
+                          aria-invalid={fieldState.invalid}
+                        >
+                          <SelectValue placeholder="Pilih" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {UserStatusOptions.map((o) => (
                             <SelectItem key={o.value} value={o.value}>
                               {o.label}
                             </SelectItem>

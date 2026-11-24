@@ -21,6 +21,7 @@ import {
   LayoutDashboardIcon,
   RouteIcon,
   TicketsIcon,
+  Undo2Icon,
   UsersIcon,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -36,6 +37,7 @@ const MENUS = [
   { icon: HeartPlusIcon, href: '/admin/services', label: 'Layanan' },
   { icon: ArmchairIcon, href: '/admin/facilities', label: 'Fasilitas' },
   { icon: UsersIcon, href: '/admin/users', label: 'Akun' },
+  { icon: Undo2Icon, href: '/admin/refunds', label: 'Refund' },
 ];
 
 export default async function Layout({ children }: { children: ReactNode }) {

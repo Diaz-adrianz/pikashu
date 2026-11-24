@@ -12,17 +12,24 @@ const types: Record<string, string> = {
   '.svg': 'image/svg+xml',
 };
 
-export async function GET(_: Request, ctx: { params: Promise<{ name: string }> }) {
+export async function GET(
+  _: Request,
+  ctx: { params: Promise<{ name: string[] }> }
+) {
   const { name } = await ctx.params;
-  const filepath = resolveUploadPath(name);
+  const filepath = resolveUploadPath(name.join('/'));
   if (!existsSync(filepath)) {
-    return NextResponse.json({ error: { code: 'NOT_FOUND', message: 'File not found' } }, { status: 404 });
+    return NextResponse.json(
+      { error: { code: 'NOT_FOUND', message: 'File not found' } },
+      { status: 404 }
+    );
   }
 
   const body = readFileSync(filepath);
   return new NextResponse(body, {
     headers: {
-      'Content-Type': types[path.extname(filepath).toLowerCase()] || 'application/octet-stream',
+      'Content-Type':
+        types[path.extname(filepath).toLowerCase()] || 'application/octet-stream',
       'Cache-Control': 'public, max-age=31536000, immutable',
     },
   });

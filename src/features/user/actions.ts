@@ -1,6 +1,7 @@
 'use server';
 
 import { actionHandler } from '@/lib/action';
+import { authorized } from '@/lib/auth';
 import {
   CreateUser,
   createUserSchema,
@@ -22,6 +23,7 @@ export async function registerUserAction(input: RegisterUser) {
 
 export async function createUserAction(input: CreateUser) {
   return actionHandler(async () => {
+    await authorized(['ADMIN'], 'throw');
     const clean = validate(createUserSchema, input),
       data = await createUser(clean);
     return { ok: true, data };
@@ -30,6 +32,7 @@ export async function createUserAction(input: CreateUser) {
 
 export async function updateUserAction(id: string, input: UpdateUser) {
   return actionHandler(async () => {
+    await authorized(['ADMIN'], 'throw');
     const clean = validate(updateUserSchema, input),
       data = await updateUser(id, clean);
     return { ok: true, data };
@@ -38,6 +41,7 @@ export async function updateUserAction(id: string, input: UpdateUser) {
 
 export async function deleteUserAction(id: string) {
   return actionHandler(async () => {
+    await authorized(['ADMIN'], 'throw');
     const data = await deleteUser(id);
     return { ok: true, data };
   });
