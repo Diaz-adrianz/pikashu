@@ -1,6 +1,6 @@
 import useSWR, { SWRConfiguration } from 'swr';
 import { useState } from 'react';
-import {
+import type {
   ApiCacheMode,
   ApiFetcherError,
   ApiParams,

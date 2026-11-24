@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ForbiddenError, UnauthenticatedError } from './auth';
+import { logger, serializeError } from './logger';
 
 /** --------------------------------------
  * Types
@@ -74,7 +75,11 @@ export const apiHandler = <T = undefined>(
       if (error instanceof ForbiddenError)
         return NextResponse.json({ message: 'Akses ditolak' }, { status: 403 });
 
-      console.error(error);
+      logger.error('API request failed', {
+        error: serializeError(error),
+        method: request.method,
+        path: request.nextUrl.pathname,
+      });
       return NextResponse.json(
         { message: 'Server Terjadi Masalah' },
         { status: 500 }

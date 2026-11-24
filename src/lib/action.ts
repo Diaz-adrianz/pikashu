@@ -1,6 +1,7 @@
 import { unstable_rethrow } from 'next/navigation';
 import { FieldErrors, ValidationError } from './zod';
 import { ForbiddenError, UnauthenticatedError } from './auth';
+import { logger, serializeError } from './logger';
 
 /** --------------------------------------
  * Types
@@ -49,7 +50,7 @@ export const actionHandler = async <T>(
     if (error instanceof ActionError)
       return { ok: false, message: error.message };
 
-    console.error(error);
+    logger.error('Server action failed', { error: serializeError(error) });
     return { ok: false, message: 'Server terjadi masalah' };
   }
 };

@@ -32,10 +32,13 @@ services:
     environment:
       DATABASE_URL: postgresql://root:root@db:5432/pikashu_dev?schema=public
       REDIS_URL: redis://redis:6379
+      LOG_DIR: /app/logs
+      LOG_NAME: app
     ports:
       - '3000:3000'
     volumes:
       - ./uploads:/app/uploads
+      - ./logs:/app/logs
     depends_on:
       db:
         condition: service_healthy
@@ -50,8 +53,11 @@ services:
     environment:
       DATABASE_URL: postgresql://root:root@db:5432/pikashu_dev?schema=public
       REDIS_URL: redis://redis:6379
+      LOG_DIR: /app/logs
+      LOG_NAME: worker
     volumes:
       - ./uploads:/app/uploads
+      - ./logs:/app/logs
     depends_on:
       db:
         condition: service_healthy

@@ -18,5 +18,8 @@ declare namespace NodeJS {
     SMTP_USER?: string;
     SMTP_PASS?: string;
     MAIL_FROM?: string;
+    LOG_DIR?: string;
+    LOG_NAME?: string;
+    LOG_LEVEL?: string;
   }
 }

@@ -7,7 +7,7 @@ import { GetAdminTripResponse } from '@/app/api/admin/trips/[id]/route';
 import { useAction } from '@/hooks/use-action';
 import { useApi } from '@/hooks/use-api';
 import { DialogState } from '@/hooks/use-dialog';
-import { ApiResponsePaginate } from '@/lib/api';
+import type { ApiResponsePaginate } from '@/lib/api';
 import { assignStaffAction } from '../actions';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';

@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { useAction } from '@/hooks/use-action';
 import { useApi } from '@/hooks/use-api';
 import { DialogState } from '@/hooks/use-dialog';
-import { ApiResponse } from '@/lib/api';
+import type { ApiResponse } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
